@@ -31,19 +31,10 @@ mkdocstrings = {version = "^0.27.0", python = ">=3.10", extras = ["python"]}
 [tool.poetry.group.test.dependencies]
 poethepoet = ">=0.9.0"
 pytest = "^6.2.5"
-pytest-asyncio = "^0.12.0"
-pytest-cov = "^2.9.0"
-pytest-mock = "^3.1.1"
-pydantic = ">=2.0,<3"
 protobuf = "^4"
-cachelib = "^0.10.2"
-tomlkit = ">=0.7.0"
 
 [tool.poetry.scripts]
 protoc-gen-python_betterproto = "betterproto2_compiler.plugin:main"
-
-[tool.poetry.extras]
-rust-codec = ["betterproto-rust-codec"]
 
 [tool.ruff]
 extend-exclude = ["tests/output_*"]
@@ -72,7 +63,7 @@ combine-as-imports = true
 
 [tool.poe.tasks.generate]
 script = "tests.generate:main"
-help = "Generate test cases (do this once before running test)"
+help = "Generate test cases"
 
 [tool.poe.tasks.types]
 cmd  = "mypy src --ignore-missing-imports"
@@ -101,10 +92,6 @@ help = "Check that the source code is formatted"
 [tool.poe.tasks._check-imports]
 cmd = "ruff check --select I src tests"
 help = "Check that the imports are sorted"
-
-[tool.poe.tasks.docs]
-cmd  = "sphinx-build docs docs/build"
-help = "Build the sphinx docs"
 
 [tool.poe.tasks.generate_lib]
 cmd = """
