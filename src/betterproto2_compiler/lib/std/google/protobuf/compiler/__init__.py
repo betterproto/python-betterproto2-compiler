@@ -6,11 +6,12 @@
 from dataclasses import dataclass
 from typing import List
 
-import betterproto2_compiler
+import betterproto
+
 import betterproto2_compiler.lib.google.protobuf as betterproto_lib_google_protobuf
 
 
-class CodeGeneratorResponseFeature(betterproto2_compiler.Enum):
+class CodeGeneratorResponseFeature(betterproto.Enum):
     """Sync with code_generator.h."""
 
     FEATURE_NONE = 0
@@ -19,13 +20,13 @@ class CodeGeneratorResponseFeature(betterproto2_compiler.Enum):
 
 
 @dataclass(eq=False, repr=False)
-class Version(betterproto2_compiler.Message):
+class Version(betterproto.Message):
     """The version number of protocol compiler."""
 
-    major: int = betterproto2_compiler.int32_field(1)
-    minor: int = betterproto2_compiler.int32_field(2)
-    patch: int = betterproto2_compiler.int32_field(3)
-    suffix: str = betterproto2_compiler.string_field(4)
+    major: int = betterproto.int32_field(1)
+    minor: int = betterproto.int32_field(2)
+    patch: int = betterproto.int32_field(3)
+    suffix: str = betterproto.string_field(4)
     """
     A suffix for alpha, beta or rc release, e.g., "alpha-1", "rc2". It should
      be empty for mainline stable releases.
@@ -33,20 +34,20 @@ class Version(betterproto2_compiler.Message):
 
 
 @dataclass(eq=False, repr=False)
-class CodeGeneratorRequest(betterproto2_compiler.Message):
+class CodeGeneratorRequest(betterproto.Message):
     """An encoded CodeGeneratorRequest is written to the plugin's stdin."""
 
-    file_to_generate: List[str] = betterproto2_compiler.string_field(1, repeated=True)
+    file_to_generate: List[str] = betterproto.string_field(1, repeated=True)
     """
     The .proto files that were explicitly listed on the command-line.  The
      code generator should generate code only for these files.  Each file's
      descriptor will be included in proto_file, below.
     """
 
-    parameter: str = betterproto2_compiler.string_field(2)
+    parameter: str = betterproto.string_field(2)
     """The generator parameter passed on the command-line."""
 
-    proto_file: List["betterproto_lib_google_protobuf.FileDescriptorProto"] = betterproto2_compiler.message_field(
+    proto_file: List["betterproto_lib_google_protobuf.FileDescriptorProto"] = betterproto.message_field(
         15, repeated=True
     )
     """
@@ -71,8 +72,8 @@ class CodeGeneratorRequest(betterproto2_compiler.Message):
      fully qualified.
     """
 
-    source_file_descriptors: List["betterproto_lib_google_protobuf.FileDescriptorProto"] = (
-        betterproto2_compiler.message_field(17, repeated=True)
+    source_file_descriptors: List["betterproto_lib_google_protobuf.FileDescriptorProto"] = betterproto.message_field(
+        17, repeated=True
     )
     """
     File descriptors with all options, including source-retention options.
@@ -80,15 +81,15 @@ class CodeGeneratorRequest(betterproto2_compiler.Message):
      files_to_generate.
     """
 
-    compiler_version: "Version" = betterproto2_compiler.message_field(3)
+    compiler_version: "Version" = betterproto.message_field(3)
     """The version number of protocol compiler."""
 
 
 @dataclass(eq=False, repr=False)
-class CodeGeneratorResponse(betterproto2_compiler.Message):
+class CodeGeneratorResponse(betterproto.Message):
     """The plugin writes an encoded CodeGeneratorResponse to stdout."""
 
-    error: str = betterproto2_compiler.string_field(1)
+    error: str = betterproto.string_field(1)
     """
     Error message.  If non-empty, code generation failed.  The plugin process
      should exit with status code zero even if it reports an error in this way.
@@ -100,13 +101,13 @@ class CodeGeneratorResponse(betterproto2_compiler.Message):
      exiting with a non-zero status code.
     """
 
-    supported_features: int = betterproto2_compiler.uint64_field(2)
+    supported_features: int = betterproto.uint64_field(2)
     """
     A bitmask of supported features that the code generator supports.
      This is a bitwise "or" of values from the Feature enum.
     """
 
-    minimum_edition: int = betterproto2_compiler.int32_field(3)
+    minimum_edition: int = betterproto.int32_field(3)
     """
     The minimum edition this plugin supports.  This will be treated as an
      Edition enum, but we want to allow unknown values.  It should be specified
@@ -114,7 +115,7 @@ class CodeGeneratorResponse(betterproto2_compiler.Message):
      effect for plugins that have FEATURE_SUPPORTS_EDITIONS set.
     """
 
-    maximum_edition: int = betterproto2_compiler.int32_field(4)
+    maximum_edition: int = betterproto.int32_field(4)
     """
     The maximum edition this plugin supports.  This will be treated as an
      Edition enum, but we want to allow unknown values.  It should be specified
@@ -122,14 +123,14 @@ class CodeGeneratorResponse(betterproto2_compiler.Message):
      effect for plugins that have FEATURE_SUPPORTS_EDITIONS set.
     """
 
-    file: List["CodeGeneratorResponseFile"] = betterproto2_compiler.message_field(15, repeated=True)
+    file: List["CodeGeneratorResponseFile"] = betterproto.message_field(15, repeated=True)
 
 
 @dataclass(eq=False, repr=False)
-class CodeGeneratorResponseFile(betterproto2_compiler.Message):
+class CodeGeneratorResponseFile(betterproto.Message):
     """Represents a single generated file."""
 
-    name: str = betterproto2_compiler.string_field(1)
+    name: str = betterproto.string_field(1)
     """
     The file name, relative to the output directory.  The name must not
      contain "." or ".." components and must be relative, not be absolute (so,
@@ -144,7 +145,7 @@ class CodeGeneratorResponseFile(betterproto2_compiler.Message):
      CodeGeneratorResponse before writing files to disk.
     """
 
-    insertion_point: str = betterproto2_compiler.string_field(2)
+    insertion_point: str = betterproto.string_field(2)
     """
     If non-empty, indicates that the named file should already exist, and the
      content here is to be inserted into that file at a defined insertion
@@ -185,10 +186,10 @@ class CodeGeneratorResponseFile(betterproto2_compiler.Message):
      If |insertion_point| is present, |name| must also be present.
     """
 
-    content: str = betterproto2_compiler.string_field(15)
+    content: str = betterproto.string_field(15)
     """The file contents."""
 
-    generated_code_info: "betterproto_lib_google_protobuf.GeneratedCodeInfo" = betterproto2_compiler.message_field(16)
+    generated_code_info: "betterproto_lib_google_protobuf.GeneratedCodeInfo" = betterproto.message_field(16)
     """
     Information describing the file content being inserted. If an insertion
      point is used, this information will be appropriately offset and inserted
