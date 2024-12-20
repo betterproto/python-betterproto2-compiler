@@ -82,9 +82,8 @@ from typing import (
 )
 
 import betterproto
+from betterproto.utils import hybridmethod
 from typing_extensions import Self
-
-from betterproto2_compiler.utils import hybridmethod
 
 
 class Syntax(betterproto.Enum):
