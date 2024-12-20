@@ -1,0 +1,11 @@
+{
+  "top": {
+    "name": "double-nested",
+    "middle": {
+      "bottom": [{"foo": "hello"}],
+      "enumBottom": ["A"],
+      "topMiddleBottom": [{"a": "hello"}],
+      "bar": true
+    }
+  }
+}
