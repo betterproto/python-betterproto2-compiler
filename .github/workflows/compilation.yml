@@ -1,9 +1,9 @@
-name: compilation
+name: Test files compilation
 
 on:
   push:
     branches:
-      - main
+      - "**"  # TODO main
   pull_request:  # TODEL
     branches:
       - '**'
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  deploy:
+  compilation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,9 +61,9 @@ jobs:
         shell: bash
         run: |
           git checkout --orphan compiled-test-files
-          cp tests/output_betterproto tests_betterproto
-          cp tests/output_betterproto_pydantic tests_betterproto_pydantic
-          cp tests/output_reference tests_reference
+          cp -r tests/output_betterproto tests_betterproto
+          cp -r tests/output_betterproto_pydantic tests_betterproto_pydantic
+          cp -r tests/output_reference tests_reference
           git add tests_betterproto tests_betterproto_pydantic tests_reference
           git commit -m "Add compilation output"
           git push --force origin compiled-test-files
