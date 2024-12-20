@@ -14,12 +14,11 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
-ruff = { version = "~0.7.4", optional = true }
+ruff = "~0.7.4"
 grpclib = "^0.4.1"
-jinja2 = { version = ">=3.0.3", optional = true }
+jinja2 = ">=3.0.3"
 python-dateutil = "^2.8"
 typing-extensions = "^4.7.1"
-betterproto-rust-codec = { version = "0.1.1", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 asv = "^0.4.2"
@@ -137,44 +136,6 @@ protoc
     /usr/local/include/google/protobuf/**/*.proto
 """
 help = "Regenerate the types in betterproto.lib.std.google"
-
-# CI tasks
-
-[tool.poe.tasks.full-test]
-shell = "poe generate && tox"
-help = "Run tests with multiple pythons"
-
-[tool.doc8]
-paths = ["docs"]
-max_line_length = 88
-
-[tool.doc8.ignore_path_errors]
-"docs/migrating.rst" = [
-    "D001",  # contains table which is longer than 88 characters long
-]
-
-[tool.coverage.run]
-omit = ["betterproto/tests/*"]
-
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-requires =
-    tox>=4.2
-    tox-poetry-installer[poetry]==1.0.0b1
-env_list =
-    py311
-    py38
-    py37
-
-[testenv]
-commands =
-    pytest {posargs: --cov betterproto}
-poetry_dep_groups =
-    test
-require_locked_deps = true
-require_poetry = true
-"""
 
 [build-system]
 requires = ["poetry-core>=1.0.0,<2"]
