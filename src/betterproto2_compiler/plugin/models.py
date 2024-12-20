@@ -389,7 +389,7 @@ class FieldCompiler(ProtoContentBase):
         """Construct string representation of this field as a field."""
         name = f"{self.py_name}"
         field_args = ", ".join(([""] + self.betterproto_field_args) if self.betterproto_field_args else [])
-        betterproto_field_type = f"betterproto.{self.field_type}_field({self.proto_obj.number}{field_args})"
+        betterproto_field_type = f"betterproto2.{self.field_type}_field({self.proto_obj.number}{field_args})"
         if self.py_name in dir(builtins):
             self.parent.builtins_types.add(self.py_name)
         return f'{name}: "{self.annotation}" = {betterproto_field_type}'
@@ -421,7 +421,7 @@ class FieldCompiler(ProtoContentBase):
         if match_wrapper:
             wrapped_type = "TYPE_" + match_wrapper.group(1).upper()
             if hasattr(betterproto2_compiler, wrapped_type):
-                return f"betterproto.{wrapped_type}"
+                return f"betterproto2.{wrapped_type}"
         return None
 
     @property
@@ -548,7 +548,7 @@ class MapEntryCompiler(FieldCompiler):
 
     @property
     def betterproto_field_args(self) -> List[str]:
-        return [f"betterproto.{self.proto_k_type}", f"betterproto.{self.proto_v_type}"]
+        return [f"betterproto2.{self.proto_k_type}", f"betterproto2.{self.proto_v_type}"]
 
     @property
     def field_type(self) -> str:

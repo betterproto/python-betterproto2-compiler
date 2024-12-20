@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-betterproto = { git = "https://github.com/betterproto/python-betterproto2", rev = "881bd6e09a809dc61add4ae4ed6a3c70c1fca00a" }
+betterproto2 = "0.0.2"
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
 ruff = "~0.7.4"
 grpclib = "^0.4.1"
