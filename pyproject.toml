@@ -12,7 +12,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
 ruff = "~0.7.4"
 grpclib = "^0.4.1"
@@ -21,13 +21,9 @@ python-dateutil = "^2.8"
 typing-extensions = "^4.7.1"
 
 [tool.poetry.group.dev.dependencies]
-asv = "^0.4.2"
-bpython = "^0.19"
 jinja2 = ">=3.0.3"
 mypy = "^1.11.2"
 pre-commit = "^2.17.0"
-grpcio-tools = "^1.54.2"
-tox = "^4.0.0"
 mkdocs-material = {version = "^9.5.49", python = ">=3.10"}
 mkdocstrings = {version = "^0.27.0", python = ">=3.10", extras = ["python"]}
 
@@ -46,7 +42,6 @@ tomlkit = ">=0.7.0"
 protoc-gen-python_betterproto = "betterproto.plugin:main"
 
 [tool.poetry.extras]
-compiler = ["ruff", "jinja2"]
 rust-codec = ["betterproto-rust-codec"]
 
 [tool.ruff]
@@ -77,10 +72,6 @@ combine-as-imports = true
 [tool.poe.tasks.generate]
 script = "tests.generate:main"
 help = "Generate test cases (do this once before running test)"
-
-[tool.poe.tasks.test]
-cmd = "pytest"
-help = "Run tests"
 
 [tool.poe.tasks.types]
 cmd  = "mypy src --ignore-missing-imports"
@@ -113,18 +104,6 @@ help = "Check that the imports are sorted"
 [tool.poe.tasks.docs]
 cmd  = "sphinx-build docs docs/build"
 help = "Build the sphinx docs"
-
-[tool.poe.tasks.bench]
-shell = "asv run master^! && asv run HEAD^! && asv compare master HEAD"
-help  = "Benchmark current commit vs. master branch"
-
-[tool.poe.tasks.clean]
-cmd  = """
-rm -rf .asv .coverage .mypy_cache .pytest_cache
-       dist betterproto.egg-info **/__pycache__
-       testsoutput_*
-"""
-help = "Clean out generated files from the workspace"
 
 [tool.poe.tasks.generate_lib]
 cmd = """
