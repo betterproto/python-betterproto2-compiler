@@ -1859,4 +1859,4 @@ rust-codec = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a6b16fe4cc66b8deac7f45dc580ab9d7833f099affc3001effb1c38641531573"
+content-hash = "d2cd1bfa85d817b0c782f8fb94a623187b56baa41f0abc4074c8cb9b425bd73c"

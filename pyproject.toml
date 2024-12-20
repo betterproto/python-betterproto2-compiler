@@ -18,7 +18,6 @@ betterproto = { git = "https://github.com/betterproto/python-betterproto2", rev 
 ruff = "~0.7.4"
 grpclib = "^0.4.1"
 jinja2 = ">=3.0.3"
-python-dateutil = "^2.8"
 typing-extensions = "^4.7.1"
 
 [tool.poetry.group.dev.dependencies]
