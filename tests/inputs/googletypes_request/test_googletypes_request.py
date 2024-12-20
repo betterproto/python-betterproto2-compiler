@@ -7,9 +7,9 @@ from typing import (
     Callable,
 )
 
+import betterproto.lib.google.protobuf as protobuf
 import pytest
 
-import betterproto.lib.google.protobuf as protobuf
 from tests.mocks import MockChannel
 from tests.output_betterproto.googletypes_request import (
     Input,

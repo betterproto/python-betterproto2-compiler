@@ -1,0 +1,67 @@
+name: Test files compilation
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  compilation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install poetry
+        shell: bash
+        run: |
+          python -m pip install poetry
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+      - name: Configure poetry
+        shell: bash
+        run: poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: .venv
+          key: venv-compilation-${{ hashFiles('**/poetry.lock') }}
+      
+      - name: Ensure cache is healthy
+        if: steps.cache.outputs.cache-hit == 'true'
+        shell: bash
+        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
+
+      - name: Install dependencies
+        shell: bash
+        run: poetry install
+
+      - name: Compile proto files
+        shell: bash
+        run: poetry run poe generate
+
+      - name: Publish the compiled files
+        shell: bash
+        run: |
+          git checkout --orphan compiled-test-files
+          git reset --hard
+          cp -r tests/output_betterproto tests_betterproto
+          cp -r tests/output_betterproto_pydantic tests_betterproto_pydantic
+          cp -r tests/output_reference tests_reference
+          git add tests_betterproto tests_betterproto_pydantic tests_reference
+          git commit -m "Add compilation output"
+          git push --force origin compiled-test-files

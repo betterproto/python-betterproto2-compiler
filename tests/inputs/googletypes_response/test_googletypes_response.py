@@ -4,9 +4,9 @@ from typing import (
     Optional,
 )
 
+import betterproto.lib.google.protobuf as protobuf
 import pytest
 
-import betterproto.lib.google.protobuf as protobuf
 from tests.mocks import MockChannel
 from tests.output_betterproto.googletypes_response import (
     Input,

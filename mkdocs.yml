@@ -1,5 +1,5 @@
-site_name: Betterproto2
-site_url: https://betterproto.github.io/python-betterproto2/
+site_name: Betterproto2 Compiler
+site_url: https://betterproto.github.io/python-betterproto2-compiler/
 theme:
   name: material
   palette:

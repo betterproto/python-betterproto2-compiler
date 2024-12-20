@@ -1,4 +1,5 @@
 import betterproto
+
 from tests.output_betterproto.oneof_enum import (
     Move,
     Signal,
