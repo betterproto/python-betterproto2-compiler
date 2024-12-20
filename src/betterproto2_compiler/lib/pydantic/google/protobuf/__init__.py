@@ -7,9 +7,8 @@ from typing import (
     Mapping,
 )
 
+from betterproto import hybridmethod
 from typing_extensions import Self
-
-from betterproto2_compiler import hybridmethod
 
 if TYPE_CHECKING:
     from dataclasses import dataclass
