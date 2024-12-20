@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "betterproto2_compiler"
 version = "2.0.0b7"
-description = "A better Protobuf / gRPC generator & library"
-authors = ["Daniel G. Taylor <danielgtaylor@gmail.com>"]
+description = "Compiler for betterproto2"
+authors = ["Adrien Vannson <adrien.vannson@protonmail.com>", "Daniel G. Taylor <danielgtaylor@gmail.com>"]
 readme = "README.md"
-repository = "https://github.com/danielgtaylor/python-betterproto"
-keywords = ["protobuf", "gRPC"]
+repository = "https://github.com/betterproto/python-betterproto2-compiler"
+keywords = ["protobuf", "gRPC", "compiler"]
 license = "MIT"
 packages = [
     { include = "betterproto2_compiler", from = "src" }
