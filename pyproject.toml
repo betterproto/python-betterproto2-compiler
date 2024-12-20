@@ -61,6 +61,10 @@ combine-as-imports = true
 
 # Dev workflow tasks
 
+[tool.poe.tasks.test]
+cmd = "pytest"
+help = "Run tests"
+
 [tool.poe.tasks.generate]
 script = "tests.generate:main"
 help = "Generate test cases"
