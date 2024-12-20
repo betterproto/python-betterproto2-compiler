@@ -3,7 +3,7 @@ name: Test files compilation
 on:
   push:
     branches:
-      - "**"  # TODO main
+      - main
   pull_request:  # TODEL
     branches:
       - '**'
