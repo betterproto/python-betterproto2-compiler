@@ -61,6 +61,7 @@ jobs:
         shell: bash
         run: |
           git checkout --orphan compiled-test-files
+          git reset --hard
           cp -r tests/output_betterproto tests_betterproto
           cp -r tests/output_betterproto_pydantic tests_betterproto_pydantic
           cp -r tests/output_reference tests_reference
