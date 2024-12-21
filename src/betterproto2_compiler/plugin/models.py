@@ -47,6 +47,7 @@ from typing import (
 )
 
 import betterproto2
+
 from betterproto2_compiler.compile.naming import (
     pythonize_class_name,
     pythonize_field_name,
