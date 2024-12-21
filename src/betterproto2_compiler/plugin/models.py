@@ -46,7 +46,8 @@ from typing import (
     Union,
 )
 
-import betterproto2_compiler
+import betterproto2
+
 from betterproto2_compiler.compile.naming import (
     pythonize_class_name,
     pythonize_field_name,
@@ -182,7 +183,7 @@ class ProtoContentBase:
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
     path: List[int]
-    parent: Union["betterproto2_compiler.Message", "OutputTemplate"]
+    parent: Union["betterproto2.Message", "OutputTemplate"]
 
     __dataclass_fields__: Dict[str, object]
 
@@ -420,7 +421,7 @@ class FieldCompiler(ProtoContentBase):
         match_wrapper = re.match(r"\.google\.protobuf\.(.+)Value$", self.proto_obj.type_name)
         if match_wrapper:
             wrapped_type = "TYPE_" + match_wrapper.group(1).upper()
-            if hasattr(betterproto2_compiler, wrapped_type):
+            if hasattr(betterproto2, wrapped_type):
                 return f"betterproto2.{wrapped_type}"
         return None
 
