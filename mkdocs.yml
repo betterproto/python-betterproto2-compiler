@@ -1,10 +1,19 @@
-site_name: Betterproto2 Compiler
+site_name: Betterproto2
 site_url: https://betterproto.github.io/python-betterproto2-compiler/
 theme:
   name: material
   palette:
     primary: deep orange
     accent: deep orange
+
+  features:
+   - navigation.tabs
+
+nav:
+  - Betterproto2: https://betterproto.github.io/python-betterproto2/
+  - Betterproto2 compiler:
+     - index.md
+     - Getting started: getting-started.md
 
 plugins:
 - mkdocstrings
