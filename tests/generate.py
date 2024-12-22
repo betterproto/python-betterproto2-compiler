@@ -149,7 +149,7 @@ HELP = "\n".join(
         "",
         "NAMES          One or more test-case names to generate classes for.",
         "               python generate.py bool double enums",
-    )
+    ),
 )
 
 

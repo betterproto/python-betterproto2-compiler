@@ -76,7 +76,8 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
         if output_package_name not in request_data.output_packages:
             # Create a new output if there is no output for this package
             request_data.output_packages[output_package_name] = OutputTemplate(
-                parent_request=request_data, package_proto_obj=proto_file
+                parent_request=request_data,
+                package_proto_obj=proto_file,
             )
         # Add this input file to the output corresponding to this package
         request_data.output_packages[output_package_name].input_files.append(proto_file)
@@ -152,7 +153,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
                 name=str(output_path),
                 # Render and then format the output file
                 content=outputfile_compiler(output_file=output_package),
-            )
+            ),
         )
 
     # Make each output directory a package with __init__ file

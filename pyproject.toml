@@ -55,6 +55,8 @@ select = [
     "UP",
 
     "I",
+
+    "COM812", # Trailing commas
 ]
 
 

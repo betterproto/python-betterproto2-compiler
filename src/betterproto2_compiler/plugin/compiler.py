@@ -14,7 +14,7 @@ except ImportError as err:
         "Please ensure that you've installed betterproto as "
         '`pip install "betterproto[compiler]"` so that compiler dependencies '
         "are included."
-        "\033[0m"
+        "\033[0m",
     )
     raise SystemExit(1)
 

@@ -37,7 +37,7 @@ class EnumType(EnumMeta if TYPE_CHECKING else type):
         new_mcs = type(
             f"{name}Type",
             tuple(
-                dict.fromkeys([base.__class__ for base in bases if base.__class__ is not type] + [EnumType, type])
+                dict.fromkeys([base.__class__ for base in bases if base.__class__ is not type] + [EnumType, type]),
             ),  # reorder the bases so EnumType and type are last to avoid conflicts
             {"_value_map_": value_map, "_member_map_": member_map},
         )

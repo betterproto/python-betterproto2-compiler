@@ -51,7 +51,7 @@ async def protoc(
                         "@echo off",
                         f"\nchdir {os.getcwd()}",
                         f"\n{sys.executable} -u {plugin_path.as_posix()}",
-                    ]
+                    ],
                 )
 
                 tf.flush()
@@ -80,7 +80,9 @@ async def protoc(
             *[p.as_posix() for p in path.glob("*.proto")],
         ]
     proc = await asyncio.create_subprocess_exec(
-        *command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *command,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
     )
     stdout, stderr = await proc.communicate()
     return stdout, stderr, proc.returncode
