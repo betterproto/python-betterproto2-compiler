@@ -5,16 +5,10 @@ import os
 import platform
 import sys
 import tempfile
+from collections.abc import Callable, Generator
 from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
-from typing import (
-    Callable,
-    Dict,
-    Generator,
-    List,
-    Tuple,
-)
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
@@ -98,11 +92,11 @@ class TestCaseJsonFile:
     test_name: str
     file_name: str
 
-    def belongs_to(self, non_symmetrical_json: Dict[str, Tuple[str, ...]]) -> bool:
+    def belongs_to(self, non_symmetrical_json: dict[str, tuple[str, ...]]) -> bool:
         return self.file_name in non_symmetrical_json.get(self.test_name, ())
 
 
-def get_test_case_json_data(test_case_name: str, *json_file_names: str) -> List[TestCaseJsonFile]:
+def get_test_case_json_data(test_case_name: str, *json_file_names: str) -> list[TestCaseJsonFile]:
     """
     :return:
         A list of all files found in "{inputs_path}/test_case_name" with names matching

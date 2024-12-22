@@ -31,17 +31,12 @@ reference to `A` to `B`'s `fields` attribute.
 
 import builtins
 import re
+from collections.abc import Iterable, Iterator
 from dataclasses import (
     dataclass,
     field,
 )
 from typing import (
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Set,
-    Type,
     Union,
 )
 
@@ -145,7 +140,7 @@ PROTO_PACKED_TYPES = (
 
 def get_comment(
     proto_file: "FileDescriptorProto",
-    path: List[int],
+    path: list[int],
 ) -> str:
     for sci_loc in proto_file.source_code_info.location:
         if list(sci_loc.path) == path:
@@ -181,10 +176,10 @@ class ProtoContentBase:
 
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    path: List[int]
+    path: list[int]
     parent: Union["betterproto2.Message", "OutputTemplate"]
 
-    __dataclass_fields__: Dict[str, object]
+    __dataclass_fields__: dict[str, object]
 
     def __post_init__(self) -> None:
         """Checks that no fake default fields were left as placeholders."""
@@ -224,10 +219,10 @@ class ProtoContentBase:
 @dataclass
 class PluginRequestCompiler:
     plugin_request_obj: CodeGeneratorRequest
-    output_packages: Dict[str, "OutputTemplate"] = field(default_factory=dict)
+    output_packages: dict[str, "OutputTemplate"] = field(default_factory=dict)
 
     @property
-    def all_messages(self) -> List["MessageCompiler"]:
+    def all_messages(self) -> list["MessageCompiler"]:
         """All of the messages in this request.
 
         Returns
@@ -249,11 +244,11 @@ class OutputTemplate:
 
     parent_request: PluginRequestCompiler
     package_proto_obj: FileDescriptorProto
-    input_files: List[str] = field(default_factory=list)
-    imports_end: Set[str] = field(default_factory=set)
-    messages: Dict[str, "MessageCompiler"] = field(default_factory=dict)
-    enums: Dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
-    services: Dict[str, "ServiceCompiler"] = field(default_factory=dict)
+    input_files: list[str] = field(default_factory=list)
+    imports_end: set[str] = field(default_factory=set)
+    messages: dict[str, "MessageCompiler"] = field(default_factory=dict)
+    enums: dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
+    services: dict[str, "ServiceCompiler"] = field(default_factory=dict)
     pydantic_dataclasses: bool = False
     output: bool = True
     typing_compiler: TypingCompiler = field(default_factory=DirectImportTypingCompiler)
@@ -289,9 +284,9 @@ class MessageCompiler(ProtoContentBase):
     typing_compiler: TypingCompiler
     parent: Union["MessageCompiler", OutputTemplate] = PLACEHOLDER
     proto_obj: DescriptorProto = PLACEHOLDER
-    path: List[int] = PLACEHOLDER
-    fields: List[Union["FieldCompiler", "MessageCompiler"]] = field(default_factory=list)
-    builtins_types: Set[str] = field(default_factory=set)
+    path: list[int] = PLACEHOLDER
+    fields: list[Union["FieldCompiler", "MessageCompiler"]] = field(default_factory=list)
+    builtins_types: set[str] = field(default_factory=set)
 
     def __post_init__(self) -> None:
         # Add message to output file
@@ -327,11 +322,9 @@ class MessageCompiler(ProtoContentBase):
     @property
     def has_message_field(self) -> bool:
         return any(
-            (
-                field.proto_obj.type in PROTO_MESSAGE_TYPES
-                for field in self.fields
-                if isinstance(field.proto_obj, FieldDescriptorProto)
-            )
+            field.proto_obj.type in PROTO_MESSAGE_TYPES
+            for field in self.fields
+            if isinstance(field.proto_obj, FieldDescriptorProto)
         )
 
 
@@ -373,8 +366,8 @@ def is_oneof(proto_field_obj: FieldDescriptorProto) -> bool:
 class FieldCompiler(ProtoContentBase):
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    path: List[int] = PLACEHOLDER
-    builtins_types: Set[str] = field(default_factory=set)
+    path: list[int] = PLACEHOLDER
+    builtins_types: set[str] = field(default_factory=set)
 
     parent: MessageCompiler = PLACEHOLDER
     proto_obj: FieldDescriptorProto = PLACEHOLDER
@@ -395,7 +388,7 @@ class FieldCompiler(ProtoContentBase):
         return f'{name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
-    def betterproto_field_args(self) -> List[str]:
+    def betterproto_field_args(self) -> list[str]:
         args = []
         if self.field_wraps:
             args.append(f"wraps={self.field_wraps}")
@@ -499,7 +492,7 @@ class OneOfFieldCompiler(FieldCompiler):
         return True
 
     @property
-    def betterproto_field_args(self) -> List[str]:
+    def betterproto_field_args(self) -> list[str]:
         args = super().betterproto_field_args
         group = self.parent.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
         args.append(f'group="{group}"')
@@ -508,8 +501,8 @@ class OneOfFieldCompiler(FieldCompiler):
 
 @dataclass
 class MapEntryCompiler(FieldCompiler):
-    py_k_type: Type | None = None
-    py_v_type: Type | None = None
+    py_k_type: type | None = None
+    py_v_type: type | None = None
     proto_k_type: str = ""
     proto_v_type: str = ""
 
@@ -547,7 +540,7 @@ class MapEntryCompiler(FieldCompiler):
         raise ValueError("can't find enum")
 
     @property
-    def betterproto_field_args(self) -> List[str]:
+    def betterproto_field_args(self) -> list[str]:
         return [f"betterproto2.{self.proto_k_type}", f"betterproto2.{self.proto_v_type}"]
 
     @property
@@ -568,7 +561,7 @@ class EnumDefinitionCompiler(MessageCompiler):
     """Representation of a proto Enum definition."""
 
     proto_obj: EnumDescriptorProto = PLACEHOLDER
-    entries: List["EnumDefinitionCompiler.EnumEntry"] = PLACEHOLDER
+    entries: list["EnumDefinitionCompiler.EnumEntry"] = PLACEHOLDER
 
     @dataclass(unsafe_hash=True)
     class EnumEntry:
@@ -596,8 +589,8 @@ class ServiceCompiler(ProtoContentBase):
     source_file: FileDescriptorProto
     parent: OutputTemplate = PLACEHOLDER
     proto_obj: DescriptorProto = PLACEHOLDER
-    path: List[int] = PLACEHOLDER
-    methods: List["ServiceMethodCompiler"] = field(default_factory=list)
+    path: list[int] = PLACEHOLDER
+    methods: list["ServiceMethodCompiler"] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         # Add service to output file
@@ -618,7 +611,7 @@ class ServiceMethodCompiler(ProtoContentBase):
     source_file: FileDescriptorProto
     parent: ServiceCompiler
     proto_obj: MethodDescriptorProto
-    path: List[int] = PLACEHOLDER
+    path: list[int] = PLACEHOLDER
 
     def __post_init__(self) -> None:
         # Add method to service

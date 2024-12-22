@@ -37,7 +37,7 @@ protobuf = "^4"
 protoc-gen-python_betterproto2 = "betterproto2_compiler.plugin:main"
 
 [tool.ruff]
-extend-exclude = ["tests/output_*"]
+extend-exclude = ["tests/output_*", "src/betterproto2_compiler/lib"]
 target-version = "py310"
 line-length = 120
 
@@ -52,7 +52,7 @@ select = [
     "SIM102", # Simplify return or yield statements
     "SIM103", # Simplify list/set/dict comprehensions
 
-    "UP007", # Use Python 3.10 unions
+    "UP",
 
     "I",
 ]

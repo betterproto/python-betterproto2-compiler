@@ -1,14 +1,9 @@
 import re
 from collections import defaultdict
+from collections.abc import Iterator
 from dataclasses import (
     dataclass,
     field,
-)
-from typing import (
-    Dict,
-    Iterator,
-    List,
-    Tuple,
 )
 
 
@@ -17,7 +12,7 @@ class ModuleValidator:
     line_iterator: Iterator[str]
     line_number: int = field(init=False, default=0)
 
-    collisions: Dict[str, List[Tuple[int, str]]] = field(init=False, default_factory=lambda: defaultdict(list))
+    collisions: dict[str, list[tuple[int, str]]] = field(init=False, default_factory=lambda: defaultdict(list))
 
     def add_import(self, imp: str, number: int, full_line: str):
         """

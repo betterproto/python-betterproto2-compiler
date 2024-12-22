@@ -1,8 +1,3 @@
-from typing import (
-    List,
-    Set,
-)
-
 import pytest
 from betterproto2.plugin.module_validation import ModuleValidator
 
@@ -98,7 +93,7 @@ from betterproto2.plugin.module_validation import ModuleValidator
         ),
     ],
 )
-def test_module_validator(text: List[str], expected_collisions: Set[str] | None):
+def test_module_validator(text: list[str], expected_collisions: set[str] | None):
     line_iterator = iter(text)
     validator = ModuleValidator(line_iterator)
     valid = validator.validate()
