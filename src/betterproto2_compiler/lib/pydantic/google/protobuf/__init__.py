@@ -2401,13 +2401,13 @@ class Value(betterproto2_compiler.Message):
     )
     """Represents a null value."""
 
-    number_value: Optional[float] = betterproto2_compiler.double_field(2, optional=True, group="kind")
+    number_value: float | None = betterproto2_compiler.double_field(2, optional=True, group="kind")
     """Represents a double value."""
 
-    string_value: Optional[str] = betterproto2_compiler.string_field(3, optional=True, group="kind")
+    string_value: str | None = betterproto2_compiler.string_field(3, optional=True, group="kind")
     """Represents a string value."""
 
-    bool_value: Optional[bool] = betterproto2_compiler.bool_field(4, optional=True, group="kind")
+    bool_value: bool | None = betterproto2_compiler.bool_field(4, optional=True, group="kind")
     """Represents a boolean value."""
 
     struct_value: Optional["Struct"] = betterproto2_compiler.message_field(5, optional=True, group="kind")

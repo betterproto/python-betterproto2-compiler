@@ -1,14 +1,10 @@
 import abc
+import builtins
 from collections import defaultdict
+from collections.abc import Iterator
 from dataclasses import (
     dataclass,
     field,
-)
-from typing import (
-    Dict,
-    Iterator,
-    Optional,
-    Set,
 )
 
 
@@ -42,7 +38,7 @@ class TypingCompiler(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> builtins.dict[str, set[str] | None]:
         """
         Returns either the direct import as a key with none as value, or a set of
         values to import from the key.
@@ -63,7 +59,7 @@ class TypingCompiler(metaclass=abc.ABCMeta):
 
 @dataclass
 class DirectImportTypingCompiler(TypingCompiler):
-    _imports: Dict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
+    _imports: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
 
     def optional(self, type_: str) -> str:
         self._imports["typing"].add("Optional")
@@ -93,7 +89,7 @@ class DirectImportTypingCompiler(TypingCompiler):
         self._imports["typing"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> builtins.dict[str, set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}
 
 
@@ -129,7 +125,7 @@ class TypingImportTypingCompiler(TypingCompiler):
         self._imported = True
         return f"typing.AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> builtins.dict[str, set[str] | None]:
         if self._imported:
             return {"typing": None}
         return {}
@@ -137,7 +133,7 @@ class TypingImportTypingCompiler(TypingCompiler):
 
 @dataclass
 class NoTyping310TypingCompiler(TypingCompiler):
-    _imports: Dict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
+    _imports: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
 
     def optional(self, type_: str) -> str:
         return f"{type_} | None"
@@ -163,5 +159,5 @@ class NoTyping310TypingCompiler(TypingCompiler):
         self._imports["collections.abc"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> builtins.dict[str, set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}

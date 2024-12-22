@@ -1,12 +1,6 @@
 import pathlib
 import sys
-from typing import (
-    Generator,
-    List,
-    Set,
-    Tuple,
-    Union,
-)
+from collections.abc import Generator
 
 from betterproto2_compiler.lib.google.protobuf import (
     DescriptorProto,
@@ -45,13 +39,13 @@ from .typing_compiler import (
 
 def traverse(
     proto_file: FileDescriptorProto,
-) -> Generator[Tuple[Union[EnumDescriptorProto, DescriptorProto], List[int]], None, None]:
+) -> Generator[tuple[EnumDescriptorProto | DescriptorProto, list[int]], None, None]:
     # Todo: Keep information about nested hierarchy
     def _traverse(
-        path: List[int],
-        items: Union[List[EnumDescriptorProto], List[DescriptorProto]],
+        path: list[int],
+        items: list[EnumDescriptorProto] | list[DescriptorProto],
         prefix: str = "",
-    ) -> Generator[Tuple[Union[EnumDescriptorProto, DescriptorProto], List[int]], None, None]:
+    ) -> Generator[tuple[EnumDescriptorProto | DescriptorProto, list[int]], None, None]:
         for i, item in enumerate(items):
             # Adjust the name since we flatten the hierarchy.
             # Todo: don't change the name, but include full name in returned tuple
@@ -82,7 +76,8 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
         if output_package_name not in request_data.output_packages:
             # Create a new output if there is no output for this package
             request_data.output_packages[output_package_name] = OutputTemplate(
-                parent_request=request_data, package_proto_obj=proto_file
+                parent_request=request_data,
+                package_proto_obj=proto_file,
             )
         # Add this input file to the output corresponding to this package
         request_data.output_packages[output_package_name].input_files.append(proto_file)
@@ -144,7 +139,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
             service.ready()
 
     # Generate output files
-    output_paths: Set[pathlib.Path] = set()
+    output_paths: set[pathlib.Path] = set()
     for output_package_name, output_package in request_data.output_packages.items():
         if not output_package.output:
             continue
@@ -158,7 +153,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
                 name=str(output_path),
                 # Render and then format the output file
                 content=outputfile_compiler(output_file=output_package),
-            )
+            ),
         )
 
     # Make each output directory a package with __init__ file
@@ -183,7 +178,7 @@ def _make_one_of_field_compiler(
     source_file: "FileDescriptorProto",
     parent: MessageCompiler,
     proto_obj: "FieldDescriptorProto",
-    path: List[int],
+    path: list[int],
 ) -> FieldCompiler:
     return OneOfFieldCompiler(
         source_file=source_file,
@@ -196,7 +191,7 @@ def _make_one_of_field_compiler(
 
 def read_protobuf_type(
     item: DescriptorProto,
-    path: List[int],
+    path: list[int],
     source_file: "FileDescriptorProto",
     output_package: OutputTemplate,
 ) -> None:

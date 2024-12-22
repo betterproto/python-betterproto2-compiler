@@ -30,7 +30,7 @@ def test_direct_import_typing_compiler():
             "Iterable",
             "AsyncIterable",
             "AsyncIterator",
-        }
+        },
     }
 
 
