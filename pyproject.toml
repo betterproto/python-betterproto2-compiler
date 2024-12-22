@@ -34,7 +34,7 @@ pytest = "^6.2.5"
 protobuf = "^4"
 
 [tool.poetry.scripts]
-protoc-gen-python_betterproto = "betterproto2_compiler.plugin:main"
+protoc-gen-python_betterproto2 = "betterproto2_compiler.plugin:main"
 
 [tool.ruff]
 extend-exclude = ["tests/output_*"]

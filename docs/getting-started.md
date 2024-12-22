@@ -30,5 +30,5 @@ You should now be able to compile it using:
 
 ```
 mkdir lib
-protoc -I . --python_betterproto_out=lib example.proto
+protoc -I . --python_betterproto2_out=lib example.proto
 ```
