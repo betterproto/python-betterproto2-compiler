@@ -46,7 +46,7 @@ async def protoc(
 ):
     path: Path = Path(path).resolve()
     output_dir: Path = Path(output_dir).resolve()
-    python_out_option: str = "python_betterproto_out" if not reference else "python_out"
+    python_out_option: str = "python_betterproto2_out" if not reference else "python_out"
 
     if pydantic_dataclasses:
         plugin_path = Path("src/betterproto2_compiler/plugin/main.py")
