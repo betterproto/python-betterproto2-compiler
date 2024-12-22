@@ -80,8 +80,8 @@ sequence = ["_format", "_sort-imports"]
 help = "Format the source code, and sort the imports"
 
 [tool.poe.tasks.check]
-sequence = ["_check-format", "_check-imports"]
-help = "Check that the source code is formatted and the imports sorted"
+sequence = ["_check-format", "_check-ruff-lint"]
+help = "Check that the source code is formatted and the code passes the linter"
 
 [tool.poe.tasks._format]
 cmd = "ruff format src tests"
@@ -95,9 +95,9 @@ help = "Sort the imports"
 cmd = "ruff format --diff src tests"
 help = "Check that the source code is formatted"
 
-[tool.poe.tasks._check-imports]
-cmd = "ruff check --select I src tests"
-help = "Check that the imports are sorted"
+[tool.poe.tasks._check-ruff-lint]
+cmd = "ruff check src tests"
+help = "Check the code with the Ruff linter"
 
 [tool.poe.tasks.generate_lib]
 cmd = """
