@@ -78,7 +78,6 @@ from typing import (
     Dict,
     List,
     Mapping,
-    Optional,
 )
 
 import betterproto2
@@ -1022,7 +1021,7 @@ class FieldDescriptorProto(betterproto2.Message):
     TODO(kenton):  Base-64 encode?
     """
 
-    oneof_index: Optional[int] = betterproto2.int32_field(9, optional=True)
+    oneof_index: int | None = betterproto2.int32_field(9, optional=True)
     """
     If set, gives the index of a oneof in the containing type's oneof_decl
     list.  This field is a member of that oneof.

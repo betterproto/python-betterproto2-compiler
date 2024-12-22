@@ -10,7 +10,6 @@ from typing import (
     Optional,
     Tuple,
     Type,
-    Union,
 )
 
 import grpclib.const
@@ -25,9 +24,9 @@ if TYPE_CHECKING:
     )
 
 
-Value = Union[str, bytes]
-MetadataLike = Union[Mapping[str, Value], Collection[Tuple[str, Value]]]
-MessageSource = Union[Iterable["IProtoMessage"], AsyncIterable["IProtoMessage"]]
+Value = str | bytes
+MetadataLike = Mapping[str, Value] | Collection[Tuple[str, Value]]
+MessageSource = Iterable["IProtoMessage"] | AsyncIterable["IProtoMessage"]
 
 
 class ServiceStub(ABC):
@@ -39,9 +38,9 @@ class ServiceStub(ABC):
         self,
         channel: "Channel",
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional[MetadataLike] = None,
+        metadata: MetadataLike | None = None,
     ) -> None:
         self.channel = channel
         self.timeout = timeout
@@ -50,9 +49,9 @@ class ServiceStub(ABC):
 
     def __resolve_request_kwargs(
         self,
-        timeout: Optional[float],
+        timeout: float | None,
         deadline: Optional["Deadline"],
-        metadata: Optional[MetadataLike],
+        metadata: MetadataLike | None,
     ):
         return {
             "timeout": self.timeout if timeout is None else timeout,
@@ -66,9 +65,9 @@ class ServiceStub(ABC):
         request: "IProtoMessage",
         response_type: Type["T"],
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional[MetadataLike] = None,
+        metadata: MetadataLike | None = None,
     ) -> "T":
         """Make a unary request and return the response."""
         async with self.channel.request(
@@ -89,9 +88,9 @@ class ServiceStub(ABC):
         request: "IProtoMessage",
         response_type: Type["T"],
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional[MetadataLike] = None,
+        metadata: MetadataLike | None = None,
     ) -> AsyncIterator["T"]:
         """Make a unary request and return the stream response iterator."""
         async with self.channel.request(
@@ -112,9 +111,9 @@ class ServiceStub(ABC):
         request_type: Type["IProtoMessage"],
         response_type: Type["T"],
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional[MetadataLike] = None,
+        metadata: MetadataLike | None = None,
     ) -> "T":
         """Make a stream request and return the response."""
         async with self.channel.request(
@@ -137,9 +136,9 @@ class ServiceStub(ABC):
         request_type: Type["IProtoMessage"],
         response_type: Type["T"],
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional[MetadataLike] = None,
+        metadata: MetadataLike | None = None,
     ) -> AsyncIterator["T"]:
         """
         Make a stream request and return an AsyncIterator to iterate over response

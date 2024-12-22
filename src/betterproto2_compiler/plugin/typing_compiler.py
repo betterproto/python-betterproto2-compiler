@@ -7,7 +7,6 @@ from dataclasses import (
 from typing import (
     Dict,
     Iterator,
-    Optional,
     Set,
 )
 
@@ -42,7 +41,7 @@ class TypingCompiler(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> Dict[str, Set[str] | None]:
         """
         Returns either the direct import as a key with none as value, or a set of
         values to import from the key.
@@ -93,7 +92,7 @@ class DirectImportTypingCompiler(TypingCompiler):
         self._imports["typing"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> Dict[str, Set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}
 
 
@@ -129,7 +128,7 @@ class TypingImportTypingCompiler(TypingCompiler):
         self._imported = True
         return f"typing.AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> Dict[str, Set[str] | None]:
         if self._imported:
             return {"typing": None}
         return {}
@@ -163,5 +162,5 @@ class NoTyping310TypingCompiler(TypingCompiler):
         self._imports["collections.abc"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
 
-    def imports(self) -> Dict[str, Optional[Set[str]]]:
+    def imports(self) -> Dict[str, Set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}

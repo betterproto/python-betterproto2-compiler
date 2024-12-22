@@ -13,9 +13,7 @@ from typing import (
     Dict,
     Generator,
     List,
-    Optional,
     Tuple,
-    Union,
 )
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
@@ -39,8 +37,8 @@ def get_directories(path):
 
 
 async def protoc(
-    path: Union[str, Path],
-    output_dir: Union[str, Path],
+    path: str | Path,
+    output_dir: str | Path,
     reference: bool = False,
     pydantic_dataclasses: bool = False,
 ):
@@ -128,7 +126,7 @@ def get_test_case_json_data(test_case_name: str, *json_file_names: str) -> List[
     return result
 
 
-def find_module(module: ModuleType, predicate: Callable[[ModuleType], bool]) -> Optional[ModuleType]:
+def find_module(module: ModuleType, predicate: Callable[[ModuleType], bool]) -> ModuleType | None:
     """
     Recursively search module tree for a module that matches the search predicate.
     Assumes that the submodules are directories containing __init__.py.

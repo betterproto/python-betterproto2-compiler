@@ -52,6 +52,8 @@ select = [
     "SIM102", # Simplify return or yield statements
     "SIM103", # Simplify list/set/dict comprehensions
 
+    "UP007", # Use Python 3.10 unions
+
     "I",
 ]
 

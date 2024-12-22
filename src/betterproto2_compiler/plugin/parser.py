@@ -5,7 +5,6 @@ from typing import (
     List,
     Set,
     Tuple,
-    Union,
 )
 
 from betterproto2_compiler.lib.google.protobuf import (
@@ -45,13 +44,13 @@ from .typing_compiler import (
 
 def traverse(
     proto_file: FileDescriptorProto,
-) -> Generator[Tuple[Union[EnumDescriptorProto, DescriptorProto], List[int]], None, None]:
+) -> Generator[Tuple[EnumDescriptorProto | DescriptorProto, List[int]], None, None]:
     # Todo: Keep information about nested hierarchy
     def _traverse(
         path: List[int],
-        items: Union[List[EnumDescriptorProto], List[DescriptorProto]],
+        items: List[EnumDescriptorProto] | List[DescriptorProto],
         prefix: str = "",
-    ) -> Generator[Tuple[Union[EnumDescriptorProto, DescriptorProto], List[int]], None, None]:
+    ) -> Generator[Tuple[EnumDescriptorProto | DescriptorProto, List[int]], None, None]:
         for i, item in enumerate(items):
             # Adjust the name since we flatten the hierarchy.
             # Todo: don't change the name, but include full name in returned tuple

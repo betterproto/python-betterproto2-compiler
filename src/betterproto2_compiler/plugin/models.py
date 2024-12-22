@@ -40,7 +40,6 @@ from typing import (
     Iterable,
     Iterator,
     List,
-    Optional,
     Set,
     Type,
     Union,
@@ -416,7 +415,7 @@ class FieldCompiler(ProtoContentBase):
         )
 
     @property
-    def field_wraps(self) -> Optional[str]:
+    def field_wraps(self) -> str | None:
         """Returns betterproto wrapped field type or None."""
         match_wrapper = re.match(r"\.google\.protobuf\.(.+)Value$", self.proto_obj.type_name)
         if match_wrapper:
@@ -509,8 +508,8 @@ class OneOfFieldCompiler(FieldCompiler):
 
 @dataclass
 class MapEntryCompiler(FieldCompiler):
-    py_k_type: Optional[Type] = None
-    py_v_type: Optional[Type] = None
+    py_k_type: Type | None = None
+    py_v_type: Type | None = None
     proto_k_type: str = ""
     proto_v_type: str = ""
 

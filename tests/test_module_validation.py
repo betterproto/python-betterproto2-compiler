@@ -1,6 +1,5 @@
 from typing import (
     List,
-    Optional,
     Set,
 )
 
@@ -99,7 +98,7 @@ from betterproto2.plugin.module_validation import ModuleValidator
         ),
     ],
 )
-def test_module_validator(text: List[str], expected_collisions: Optional[Set[str]]):
+def test_module_validator(text: List[str], expected_collisions: Set[str] | None):
     line_iterator = iter(text)
     validator = ModuleValidator(line_iterator)
     valid = validator.validate()

@@ -9,7 +9,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
-    Optional,
     Tuple,
 )
 
@@ -111,12 +110,12 @@ class Enum(IntEnum if TYPE_CHECKING else int, metaclass=EnumType):
     inherit from this. Emulates `enum.IntEnum`.
     """
 
-    name: Optional[str]
+    name: str | None
     value: int
 
     if not TYPE_CHECKING:
 
-        def __new__(cls, *, name: Optional[str], value: int) -> Self:
+        def __new__(cls, *, name: str | None, value: int) -> Self:
             self = super().__new__(cls, value)
             super().__setattr__(self, "name", name)
             super().__setattr__(self, "value", value)
