@@ -10,24 +10,7 @@ class {% block class_name %}{% endblock %}({% block inherit_from %}{% endblock %
     {% block class_content %}{% endblock %}
 
     {% for method in service.methods %}
-    async def {{ method.py_name }}(self
-        {%- if not method.client_streaming -%}
-            , message:
-                {%- if method.is_input_msg_empty -%}
-                    "{{ method.py_input_message_type }} | None" = None
-                {%- else -%}
-                    "{{ method.py_input_message_type }}"
-                {%- endif -%}
-        {%- else -%}
-            {# Client streaming: need a request iterator instead #}
-            , messages: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
-        {%- endif -%}
-            ,
-            *
-            , timeout: "float | None" = None
-            , deadline: "Deadline | None" = None
-            , metadata: "MetadataLike | None" = None
-            ) -> "{% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}":
+    {% block method_definition scoped required %}{% endblock %}
         {% if method.comment %}
         """
         {{ method.comment | indent(8) }}
