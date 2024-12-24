@@ -35,6 +35,7 @@ from dataclasses import dataclass
 import betterproto2
 {% if output_file.services %}
 from betterproto2.grpc.grpclib_server import ServiceBase
+import grpc
 import grpclib
 {% endif %}
 
