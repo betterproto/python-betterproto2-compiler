@@ -140,7 +140,7 @@ class TypingImportTypingCompiler(TypingCompiler):
     def async_iterator(self, type_: str) -> str:
         self._imported = True
         return f"typing.AsyncIterator[{type_}]"
-    
+
     def sync_iterable(self, type_: str) -> str:
         self._imported = True
         return f"typing.Iterable[{type_}]"
