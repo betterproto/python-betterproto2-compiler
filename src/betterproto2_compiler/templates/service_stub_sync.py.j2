@@ -1,3 +1,10 @@
 {% extends "service_stub.py.j2" %}
 
+{# Class definition #}
 {% block class_name %}{{ service.py_name }}SyncStub{% endblock %}
+
+{% block class_content %}
+    {# TODO move to parent class #}
+    def __init__(self, channel: grpc.Channel):
+        self._channel = channel
+{% endblock %}
