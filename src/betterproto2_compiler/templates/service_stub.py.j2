@@ -1,0 +1,96 @@
+class {% block class_name %}{% endblock %}(betterproto2.ServiceStub):
+    {% if service.comment %}
+    """
+    {{ service.comment | indent(4) }}
+    """
+    {% elif not service.methods %}
+    pass
+    {% endif %}
+
+    {% for method in service.methods %}
+    async def {{ method.py_name }}(self
+        {%- if not method.client_streaming -%}
+            , message:
+                {%- if method.is_input_msg_empty -%}
+                    "{{ method.py_input_message_type }} | None" = None
+                {%- else -%}
+                    "{{ method.py_input_message_type }}"
+                {%- endif -%}
+        {%- else -%}
+            {# Client streaming: need a request iterator instead #}
+            , messages: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
+        {%- endif -%}
+            ,
+            *
+            , timeout: "float | None" = None
+            , deadline: "Deadline | None" = None
+            , metadata: "MetadataLike | None" = None
+            ) -> "{% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}":
+        {% if method.comment %}
+        """
+        {{ method.comment | indent(8) }}
+        """
+        {% endif %}
+
+        {% if method.deprecated %}
+        warnings.warn("{{ service.py_name }}.{{ method.py_name }} is deprecated", DeprecationWarning)
+        {% endif %}
+
+        {% if method.server_streaming %}
+            {% if method.client_streaming %}
+        async for response in self._stream_stream(
+            "{{ method.route }}",
+            messages,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+            {% else %}{# i.e. not client streaming #}
+        {% if method.is_input_msg_empty %}
+        if message is None:
+            message = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        async for response in self._unary_stream(
+            "{{ method.route }}",
+            message,
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+
+            {% endif %}{# if client streaming #}
+        {% else %}{# i.e. not server streaming #}
+            {% if method.client_streaming %}
+        return await self._stream_unary(
+            "{{ method.route }}",
+            messages,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+            {% else %}{# i.e. not client streaming #}
+        {% if method.is_input_msg_empty %}
+        if message is None:
+            message = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        return await self._unary_unary(
+            "{{ method.route }}",
+            message,
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+            {% endif %}{# client streaming #}
+        {% endif %}
+
+    {% endfor %}
