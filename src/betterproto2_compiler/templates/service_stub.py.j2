@@ -1,4 +1,4 @@
-class {% block class_name %}{% endblock %}(betterproto2.ServiceStub):
+class {% block class_name %}{% endblock %}({% block inherit_from %}{% endblock %}):
     {% if service.comment %}
     """
     {{ service.comment | indent(4) }}
@@ -6,6 +6,8 @@ class {% block class_name %}{% endblock %}(betterproto2.ServiceStub):
     {% elif not service.methods %}
     pass
     {% endif %}
+
+    {% block class_content %}{% endblock %}
 
     {% for method in service.methods %}
     async def {{ method.py_name }}(self
