@@ -38,6 +38,14 @@ class TypingCompiler(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def sync_iterable(self, type_: str) -> str:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def sync_iterator(self, type_: str) -> str:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def imports(self) -> builtins.dict[str, set[str] | None]:
         """
         Returns either the direct import as a key with none as value, or a set of
@@ -89,6 +97,14 @@ class DirectImportTypingCompiler(TypingCompiler):
         self._imports["typing"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
 
+    def sync_iterable(self, type_: str) -> str:
+        self._imports["typing"].add("Iterable")
+        return f"Iterable[{type_}]"
+
+    def sync_iterator(self, type_: str) -> str:
+        self._imports["typing"].add("Iterator")
+        return f"Iterator[{type_}]"
+
     def imports(self) -> builtins.dict[str, set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}
 
@@ -124,6 +140,14 @@ class TypingImportTypingCompiler(TypingCompiler):
     def async_iterator(self, type_: str) -> str:
         self._imported = True
         return f"typing.AsyncIterator[{type_}]"
+    
+    def sync_iterable(self, type_: str) -> str:
+        self._imported = True
+        return f"typing.Iterable[{type_}]"
+
+    def sync_iterator(self, type_: str) -> str:
+        self._imported = True
+        return f"typing.Iterator[{type_}]"
 
     def imports(self) -> builtins.dict[str, set[str] | None]:
         if self._imported:
@@ -158,6 +182,14 @@ class NoTyping310TypingCompiler(TypingCompiler):
     def async_iterator(self, type_: str) -> str:
         self._imports["collections.abc"].add("AsyncIterator")
         return f"AsyncIterator[{type_}]"
+
+    def async_iterable(self, type_: str) -> str:
+        self._imports["collections.abc"].add("Iterable")
+        return f"Iterable[{type_}]"
+
+    def async_iterator(self, type_: str) -> str:
+        self._imports["collections.abc"].add("Iterator")
+        return f"Iterator[{type_}]"
 
     def imports(self) -> builtins.dict[str, set[str] | None]:
         return {k: v if v else None for k, v in self._imports.items()}

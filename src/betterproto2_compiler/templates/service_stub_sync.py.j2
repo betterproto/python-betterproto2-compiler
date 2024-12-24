@@ -8,3 +8,25 @@
     def __init__(self, channel: grpc.Channel):
         self._channel = channel
 {% endblock %}
+
+{# Methods definition #}
+{% block method_definition %}
+    def {{ method.py_name }}(self
+        {%- if not method.client_streaming -%}
+            , {{ method.py_input_message_param }}:
+                {%- if method.is_input_msg_empty -%}
+                    "{{ method.py_input_message_type }} | None" = None
+                {%- else -%}
+                    "{{ method.py_input_message_type }}"
+                {%- endif -%}
+        {%- else -%}
+            {# Client streaming: need a request iterator instead #}
+            , {{ method.py_input_message_param }}_iterator: "{{ output_file.typing_compiler.iterable(method.py_input_message_type) }}"
+        {%- endif -%}
+            ,
+            *
+            , timeout: {{ output_file.typing_compiler.optional("float") }} = None
+            , deadline: "{{ output_file.typing_compiler.optional("Deadline") }}" = None
+            , metadata: "{{ output_file.typing_compiler.optional("MetadataLike") }}" = None
+            ) -> "{% if method.server_streaming %}{{ output_file.typing_compiler.sync_iterator(method.py_output_message_type ) }}{% else %}{{ method.py_output_message_type }}{% endif %}":
+{% endblock %}
