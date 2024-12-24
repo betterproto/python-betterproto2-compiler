@@ -38,19 +38,19 @@
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )({{ method.py_input_message_param }}_iterator):
+        )(messages):
             yield response
       {% else %}
         {% if method.is_input_msg_empty %}
-        if {{ method.py_input_message_param }} is None:
-            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+        if message is None:
+            message = {{ method.py_input_message_type }}()
 
         {% endif %}
         for response in self._channel.unary_stream(
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )({{ method.py_input_message_param }}):
+        )(message):
             yield response
 
       {% endif %}
@@ -60,18 +60,18 @@
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )({{ method.py_input_message_param }}_iterator)
+        )(messages)
       {% else %}
         {% if method.is_input_msg_empty %}
-        if {{ method.py_input_message_param }} is None:
-            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+        if message is None:
+            message = {{ method.py_input_message_type }}()
 
         {% endif %}
         return self._channel.unary_unary(
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )({{ method.py_input_message_param }})
+        )(message)
       {% endif %}
     {% endif %}
 {% endblock %}
