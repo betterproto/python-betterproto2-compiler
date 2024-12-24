@@ -30,3 +30,7 @@
             , metadata: "MetadataLike | None" = None
             ) -> "{% if method.server_streaming %}Iterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}":
 {% endblock %}
+
+{% block method_body %}
+        pass
+{% endblock %}
