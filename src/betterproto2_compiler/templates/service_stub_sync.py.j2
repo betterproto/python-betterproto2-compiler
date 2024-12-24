@@ -30,3 +30,7 @@
             , metadata: "{{ output_file.typing_compiler.optional("MetadataLike") }}" = None
             ) -> "{% if method.server_streaming %}{{ output_file.typing_compiler.sync_iterator(method.py_output_message_type ) }}{% else %}{{ method.py_output_message_type }}{% endif %}":
 {% endblock %}
+
+{% block method_body %}
+        pass
+{% endblock %}

@@ -25,3 +25,62 @@
             , metadata: "{{ output_file.typing_compiler.optional("MetadataLike") }}" = None
             ) -> "{% if method.server_streaming %}{{ output_file.typing_compiler.async_iterator(method.py_output_message_type ) }}{% else %}{{ method.py_output_message_type }}{% endif %}":
 {% endblock %}
+
+{% block method_body %}
+    {% if method.server_streaming %}
+      {% if method.client_streaming %}
+        async for response in self._stream_stream(
+            "{{ method.route }}",
+            {{ method.py_input_message_param }}_iterator,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+      {% else %}
+        {% if method.is_input_msg_empty %}
+        if {{ method.py_input_message_param }} is None:
+            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        async for response in self._unary_stream(
+            "{{ method.route }}",
+            {{ method.py_input_message_param }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+
+      {% endif %}
+    {% else %}
+      {% if method.client_streaming %}
+        return await self._stream_unary(
+            "{{ method.route }}",
+            {{ method.py_input_message_param }}_iterator,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+      {% else %}
+        {% if method.is_input_msg_empty %}
+        if {{ method.py_input_message_param }} is None:
+            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        return await self._unary_unary(
+            "{{ method.route }}",
+            {{ method.py_input_message_param }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+      {% endif %}
+    {% endif %}
+{% endblock %}
