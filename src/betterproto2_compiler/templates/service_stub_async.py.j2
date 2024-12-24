@@ -25,3 +25,62 @@
             , metadata: "MetadataLike | None" = None
             ) -> "{% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}":
 {% endblock %}
+
+{% block method_body %}
+    {% if method.server_streaming %}
+      {% if method.client_streaming %}
+        async for response in self._stream_stream(
+            "{{ method.route }}",
+            messages,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+      {% else %}
+        {% if method.is_input_msg_empty %}
+        if message is None:
+            message = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        async for response in self._unary_stream(
+            "{{ method.route }}",
+            message,
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+
+      {% endif %}
+    {% else %}
+      {% if method.client_streaming %}
+        return await self._stream_unary(
+            "{{ method.route }}",
+            messages,
+            {{ method.py_input_message_type }},
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+      {% else %}
+        {% if method.is_input_msg_empty %}
+        if message is None:
+            message = {{ method.py_input_message_type }}()
+
+        {% endif %}
+        return await self._unary_unary(
+            "{{ method.route }}",
+            message,
+            {{ method.py_output_message_type }},
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+      {% endif %}
+    {% endif %}
+{% endblock %}
