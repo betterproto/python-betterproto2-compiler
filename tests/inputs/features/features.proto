@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
 package features;
 
 message Bar {
@@ -46,4 +49,29 @@ message OneofMsg {
         IntMsg a = 3;
         string b = 4;
     }
+}
+
+// JSON casing
+message JsonCasingMsg {
+    int32 pascal_case = 1;
+    int32 camel_case = 2;
+    int32 snake_case = 3;
+    int32 kabob_case = 4;
+}
+
+// Optional fields
+message OptionalBoolMsg {
+    google.protobuf.BoolValue field = 1;
+}
+
+message OptionalDatetimeMsg {
+    google.protobuf.Timestamp field = 1;
+}
+
+// Other message definitions
+message MsgA {
+    int32 some_int = 1;
+    double some_double = 2;
+    string some_str = 3;
+    bool some_bool = 4;
 }
