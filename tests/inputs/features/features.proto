@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package features;
+
+message Bar {
+    string name = 1;
+}
+
+message Foo {
+    string name = 1;
+    Bar child = 2;
+}
+
+// Enums as int json
+enum Enum {
+    ZERO = 0;
+    ONE = 1;
+}
+
+message EnumMsg {
+    Enum enum = 1;
+}
+
+// Unknown fields
+message Newer {
+    bool x = 1;
+    int32 y = 2;
+    string z = 3;
+}
+
+message Older {
+    bool x = 1;
+}
+
+// Oneof support
+message IntMsg {
+    int32 val = 1;
+}
+
+message OneofMsg {
+    oneof group1 {
+        int32 x = 1;
+        string y = 2;
+    }
+    oneof group2 {
+        IntMsg a = 3;
+        string b = 4;
+    }
+}
