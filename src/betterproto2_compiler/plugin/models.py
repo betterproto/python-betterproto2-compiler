@@ -53,6 +53,7 @@ from betterproto2_compiler.lib.google.protobuf import (
     FieldDescriptorProto,
     FieldDescriptorProtoLabel,
     FieldDescriptorProtoType,
+    FieldDescriptorProtoType as FieldType,
     FileDescriptorProto,
     MethodDescriptorProto,
 )
@@ -339,7 +340,7 @@ def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProt
         map_entry = f"{proto_field_obj.name.replace('_', '').lower()}entry"
         if message_type == map_entry:
             for nested in parent_message.nested_type:  # parent message
-                if nested.name.replace("_", "").lower() == map_entry and nested.options.map_entry:
+                if nested.name.replace("_", "").lower() == map_entry and nested.options and nested.options.map_entry:
                     return True
     return False
 
@@ -382,7 +383,10 @@ class FieldCompiler(ProtoContentBase):
         """Construct string representation of this field as a field."""
         name = f"{self.py_name}"
         field_args = ", ".join(([""] + self.betterproto_field_args) if self.betterproto_field_args else [])
-        betterproto_field_type = f"betterproto2.{self.field_type}_field({self.proto_obj.number}{field_args})"
+
+        betterproto_field_type = (
+            f"betterproto2.field({self.proto_obj.number}, betterproto2.{str(self.field_type)}{field_args})"
+        )
         if self.py_name in dir(builtins):
             self.parent.builtins_types.add(self.py_name)
         return f'{name}: "{self.annotation}" = {betterproto_field_type}'
@@ -396,9 +400,9 @@ class FieldCompiler(ProtoContentBase):
             args.append("optional=True")
         if self.repeated:
             args.append("repeated=True")
-        if self.field_type == "enum":
+        if self.field_type == FieldType.TYPE_ENUM:
             t = self.py_type
-            args.append(f"enum_default_value=lambda: {t}.try_value(0)")
+            args.append(f"default_factory=lambda: {t}.try_value(0)")
         return args
 
     @property
@@ -426,12 +430,13 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def optional(self) -> bool:
-        return self.proto_obj.proto3_optional or (self.field_type == "message" and not self.repeated)
+        # TODO not for maps
+        return self.proto_obj.proto3_optional or (self.field_type == FieldType.TYPE_MESSAGE and not self.repeated)
 
     @property
-    def field_type(self) -> str:
-        """String representation of proto field type."""
-        return FieldDescriptorProtoType(self.proto_obj.type).name.lower().replace("type_", "")
+    def field_type(self) -> FieldType:
+        # TODO it should be possible to remove constructor
+        return FieldType(self.proto_obj.type)
 
     @property
     def packed(self) -> bool:
@@ -540,13 +545,17 @@ class MapEntryCompiler(FieldCompiler):
 
         raise ValueError("can't find enum")
 
-    @property
-    def betterproto_field_args(self) -> list[str]:
-        return [f"betterproto2.{self.proto_k_type}", f"betterproto2.{self.proto_v_type}"]
-
-    @property
-    def field_type(self) -> str:
-        return "map"
+    def get_field_string(self) -> str:
+        """Construct string representation of this field as a field."""
+        betterproto_field_type = (
+            f"betterproto2.field({self.proto_obj.number}, "
+            "betterproto2.TYPE_MAP, "
+            f"map_types=(betterproto2.{self.proto_k_type}, "
+            f"betterproto2.{self.proto_v_type}))"
+        )
+        if self.py_name in dir(builtins):
+            self.parent.builtins_types.add(self.py_name)
+        return f'{self.py_name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
     def annotation(self) -> str:
