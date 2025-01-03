@@ -1,6 +1,7 @@
 import os.path
 import subprocess
 import sys
+from importlib import metadata
 
 from .module_validation import ModuleValidator
 
@@ -24,6 +25,8 @@ from .models import OutputTemplate
 def outputfile_compiler(output_file: OutputTemplate) -> str:
     templates_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
+    version = metadata.version("betterproto2_compiler")
+
     env = jinja2.Environment(
         trim_blocks=True,
         lstrip_blocks=True,
@@ -35,7 +38,7 @@ def outputfile_compiler(output_file: OutputTemplate) -> str:
     header_template = env.get_template("header.py.j2")
 
     code = body_template.render(output_file=output_file)
-    code = header_template.render(output_file=output_file) + "\n" + code
+    code = header_template.render(output_file=output_file, version=version) + "\n" + code
 
     # Sort imports, delete unused ones
     code = subprocess.check_output(
