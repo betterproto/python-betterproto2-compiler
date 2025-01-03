@@ -22,6 +22,7 @@ from .models import (
     FieldCompiler,
     MapEntryCompiler,
     MessageCompiler,
+    OneofCompiler,
     OneOfFieldCompiler,
     OutputTemplate,
     PluginRequestCompiler,
@@ -217,7 +218,13 @@ def read_protobuf_type(
                     typing_compiler=output_package.typing_compiler,
                 )
             elif is_oneof(field):
-                _make_one_of_field_compiler(output_package, source_file, message_data, field, path + [2, index])
+                OneOfFieldCompiler(
+                    source_file=source_file,
+                    parent=message_data,
+                    proto_obj=field,
+                    path=path + [2, index],
+                    typing_compiler=output_package.typing_compiler,
+                )
             else:
                 FieldCompiler(
                     source_file=source_file,
@@ -226,6 +233,16 @@ def read_protobuf_type(
                     path=path + [2, index],
                     typing_compiler=output_package.typing_compiler,
                 )
+
+        for index, oneof in enumerate(item.oneof_decl):
+            OneofCompiler(
+                source_file=source_file,
+                typing_compiler=output_package.typing_compiler,
+                path=path + [8, index],
+                parent=message_data,
+                proto_obj=oneof,
+            )
+
     elif isinstance(item, EnumDescriptorProto):
         # Enum
         EnumDefinitionCompiler(

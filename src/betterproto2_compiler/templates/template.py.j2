@@ -32,9 +32,16 @@ class {{ enum.py_name }}(betterproto2.Enum):
 @dataclass(eq=False, repr=False)
 {% endif %}
 class {{ message.py_name }}(betterproto2.Message):
-    {% if message.comment %}
+    {% if message.comment or message.oneofs %}
     """
     {{ message.comment | indent(4) }}
+
+    {% if message.oneofs %}
+    Oneofs:
+        {% for oneof in message.oneofs %}
+        - {{ oneof.name }}: {{ oneof.comment | indent(12) }}
+        {% endfor %}
+    {% endif %}
     """
     {% endif %}
 
