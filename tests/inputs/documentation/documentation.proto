@@ -13,6 +13,20 @@ message Test { // Documentation of message 3
     // Documentation of field 2
     // other line 2
     uint32 x = 1; // Documentation of field 3
+
+    // Documentation of oneof 1
+    // other line 1
+
+    // Documentation of oneof 2
+    // other line 2
+    oneof oneof_example { // Documentation of oneof 3
+        // Documentation of oneof field 1
+        // other line 1
+
+        // Documentation of oneof field 2
+        // other line 2
+        int32 a = 2; // Documentation of oneof field 3
+    }
 }
 
 // Documentation of enum 1

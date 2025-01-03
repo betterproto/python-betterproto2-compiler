@@ -56,6 +56,7 @@ from betterproto2_compiler.lib.google.protobuf import (
     FieldDescriptorProtoType as FieldType,
     FileDescriptorProto,
     MethodDescriptorProto,
+    OneofDescriptorProto,
 )
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
 
@@ -287,6 +288,7 @@ class MessageCompiler(ProtoContentBase):
     proto_obj: DescriptorProto = PLACEHOLDER
     path: list[int] = PLACEHOLDER
     fields: list[Union["FieldCompiler", "MessageCompiler"]] = field(default_factory=list)
+    oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
 
     def __post_init__(self) -> None:
@@ -564,6 +566,26 @@ class MapEntryCompiler(FieldCompiler):
     @property
     def repeated(self) -> bool:
         return False  # maps cannot be repeated
+
+
+@dataclass
+class OneofCompiler(ProtoContentBase):
+    source_file: FileDescriptorProto
+    typing_compiler: TypingCompiler
+    path: list[int] = PLACEHOLDER
+
+    parent: MessageCompiler = PLACEHOLDER
+    proto_obj: OneofDescriptorProto = PLACEHOLDER
+
+    def __post_init__(self) -> None:
+        # Add oneof to message
+        if isinstance(self.parent, MessageCompiler):  # TODO why?
+            self.parent.oneofs.append(self)
+        super().__post_init__()
+
+    @property
+    def name(self) -> str:
+        return self.proto_obj.name
 
 
 @dataclass
