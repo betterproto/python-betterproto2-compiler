@@ -45,13 +45,13 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "betterproto2"
-version = "0.1.0"
+version = "0.1.1"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "betterproto2-0.1.0-py3-none-any.whl", hash = "sha256:9f1e51b896f499f53a183577a7aa00e1888fd1490b5dfd83f81c725fe0226341"},
-    {file = "betterproto2-0.1.0.tar.gz", hash = "sha256:ea493987d491721d53709d616bd9542d35a884485f4ee0ab38d4d2d04870d87d"},
+    {file = "betterproto2-0.1.1-py3-none-any.whl", hash = "sha256:c00cf0a0567ddbd32f2bbc52abb49eb1473179ec74fff524c73a29c915d35936"},
+    {file = "betterproto2-0.1.1.tar.gz", hash = "sha256:ff53a796907b24d7ed3433f0b2c9c356a0eda2867ea266d2791f5f5bb3925f33"},
 ]
 
 [package.dependencies]
@@ -1553,4 +1553,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "884a45f57359d3969df38d1fa7d96643450cfd44233f8016ffe2f6899d957bfa"
+content-hash = "060e31d81903103c44371d08d4da79f6c072cfa6971734f6dd9e1bb370c048b4"
