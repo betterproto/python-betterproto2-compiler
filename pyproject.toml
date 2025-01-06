@@ -102,13 +102,13 @@ cmd = "ruff check src tests"
 help = "Check the code with the Ruff linter"
 
 [tool.poe.tasks.generate_lib]
-cmd = """
-protoc
-    --plugin=protoc-gen-custom=src/betterproto2_compiler/plugin/main.py
-    --custom_opt=INCLUDE_GOOGLE
-    --custom_out=src/betterproto/lib/std
-    -I /usr/local/include/
-    /usr/local/include/google/protobuf/**/*.proto
+shell = """
+protoc \
+    --plugin=protoc-gen-custom=src/betterproto2_compiler/plugin/main.py \
+    --custom_opt=INCLUDE_GOOGLE \
+    --custom_out=src/betterproto2_compiler/lib \
+    -I /usr/include/ \
+    /usr/include/google/protobuf/**/*.proto
 """
 help = "Regenerate the types in betterproto.lib.std.google"
 
