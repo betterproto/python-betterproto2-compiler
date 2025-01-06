@@ -971,7 +971,7 @@ class Field(betterproto2.Message):
     The field type URL, without the scheme, for message or enumeration
     types. Example: `"type.googleapis.com/google.protobuf.Timestamp"`.
     """
-    oneof_index: "int" = betterproto2.field(7, betterproto2.TYPE_INT32)
+    oneof_index: "Optional[int]" = betterproto2.field(7, betterproto2.TYPE_INT32, optional=True)
     """
     The index of the field type in `Type.oneofs`, for message or enumeration
     types. The first type has index 1; zero means the type is not in the list.
@@ -1034,7 +1034,7 @@ class FieldDescriptorProto(betterproto2.Message):
     For bytes, contains the C escaped value.  All bytes >= 128 are escaped.
     TODO(kenton):  Base-64 encode?
     """
-    oneof_index: "int" = betterproto2.field(9, betterproto2.TYPE_INT32)
+    oneof_index: "Optional[int]" = betterproto2.field(9, betterproto2.TYPE_INT32, optional=True)
     """
     If set, gives the index of a oneof in the containing type's oneof_decl
     list.  This field is a member of that oneof.
