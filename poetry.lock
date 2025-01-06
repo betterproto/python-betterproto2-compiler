@@ -45,13 +45,13 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "betterproto2"
-version = "0.0.2"
+version = "0.1.0"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "betterproto2-0.0.2-py3-none-any.whl", hash = "sha256:540d87a9ee30f12852827f9dc69483da7aeb9d17f46864c3b391f7f7fdb5ec07"},
-    {file = "betterproto2-0.0.2.tar.gz", hash = "sha256:f55b9069256e199d61b49230516baf850fe928256e57e2b4d3b9034162d72e14"},
+    {file = "betterproto2-0.1.0-py3-none-any.whl", hash = "sha256:9f1e51b896f499f53a183577a7aa00e1888fd1490b5dfd83f81c725fe0226341"},
+    {file = "betterproto2-0.1.0.tar.gz", hash = "sha256:ea493987d491721d53709d616bd9542d35a884485f4ee0ab38d4d2d04870d87d"},
 ]
 
 [package.dependencies]
@@ -60,7 +60,6 @@ python-dateutil = ">=2.8,<3.0"
 typing-extensions = ">=4.7.1,<5.0.0"
 
 [package.extras]
-compiler = ["jinja2 (>=3.0.3)", "ruff (>=0.7.4,<0.8.0)"]
 rust-codec = ["betterproto-rust-codec (==0.1.1)"]
 
 [[package]]
@@ -1554,4 +1553,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "14f7a0419039f53a2db6c2b86bde16273912439556d9b5fa52ac51fe03121eea"
+content-hash = "884a45f57359d3969df38d1fa7d96643450cfd44233f8016ffe2f6899d957bfa"
