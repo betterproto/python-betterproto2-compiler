@@ -5,8 +5,9 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from betterproto2.lib.google import protobuf as google_protobuf
+
 from ..casing import safe_snake_case
-from ..lib.google import protobuf as google_protobuf
 from .naming import pythonize_class_name
 
 if TYPE_CHECKING:

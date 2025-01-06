@@ -41,13 +41,7 @@ from typing import (
 )
 
 import betterproto2
-
-from betterproto2_compiler.compile.naming import (
-    pythonize_class_name,
-    pythonize_field_name,
-    pythonize_method_name,
-)
-from betterproto2_compiler.lib.google.protobuf import (
+from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
     FieldDescriptorProto,
@@ -57,6 +51,12 @@ from betterproto2_compiler.lib.google.protobuf import (
     FileDescriptorProto,
     MethodDescriptorProto,
     OneofDescriptorProto,
+)
+
+from betterproto2_compiler.compile.naming import (
+    pythonize_class_name,
+    pythonize_field_name,
+    pythonize_method_name,
 )
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
 
@@ -116,28 +116,6 @@ PROTO_PACKED_TYPES = (
     FieldDescriptorProtoType.TYPE_SINT32,  # 17
     FieldDescriptorProtoType.TYPE_SINT64,  # 18
 )
-
-
-# TODO patch again to make field optional
-# def monkey_patch_oneof_index():
-#     """
-#     The compiler message types are written for proto2, but we read them as proto3.
-#     For this to work in the case of the oneof_index fields, which depend on being able
-#     to tell whether they were set, we have to treat them as oneof fields. This method
-#     monkey patches the generated classes after the fact to force this behaviour.
-#     """
-#     object.__setattr__(
-#         FieldDescriptorProto.__dataclass_fields__["oneof_index"].metadata[
-#             "betterproto"
-#         ],
-#         "group",
-#         "oneof_index",
-#     )
-#     object.__setattr__(
-#         Field.__dataclass_fields__["oneof_index"].metadata["betterproto"],
-#         "group",
-#         "oneof_index",
-#     )
 
 
 def get_comment(

@@ -2,13 +2,13 @@ import pathlib
 import sys
 from collections.abc import Generator
 
-from betterproto2_compiler.lib.google.protobuf import (
+from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
-    FieldDescriptorProto,
     FileDescriptorProto,
     ServiceDescriptorProto,
 )
+
 from betterproto2_compiler.lib.google.protobuf.compiler import (
     CodeGeneratorRequest,
     CodeGeneratorResponse,
@@ -172,22 +172,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
         print(f"Writing {output_package_name}", file=sys.stderr)
 
     return response
-
-
-def _make_one_of_field_compiler(
-    output_package: OutputTemplate,
-    source_file: "FileDescriptorProto",
-    parent: MessageCompiler,
-    proto_obj: "FieldDescriptorProto",
-    path: list[int],
-) -> FieldCompiler:
-    return OneOfFieldCompiler(
-        source_file=source_file,
-        parent=parent,
-        proto_obj=proto_obj,
-        path=path,
-        typing_compiler=output_package.typing_compiler,
-    )
 
 
 def read_protobuf_type(

@@ -1,5 +1,6 @@
 import pytest
-from betterproto2.plugin.module_validation import ModuleValidator
+
+from betterproto2_compiler.plugin.module_validation import ModuleValidator
 
 
 @pytest.mark.parametrize(

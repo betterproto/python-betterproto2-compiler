@@ -1,4 +1,4 @@
-from betterproto2.plugin.typing_compiler import (
+from betterproto2_compiler.plugin.typing_compiler import (
     DirectImportTypingCompiler,
     NoTyping310TypingCompiler,
     TypingImportTypingCompiler,

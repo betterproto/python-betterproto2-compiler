@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "betterproto2_compiler"
-version = "0.1.0"
+version = "0.1.1"
 description = "Compiler for betterproto2"
 authors = ["Adrien Vannson <adrien.vannson@protonmail.com>", "Daniel G. Taylor <danielgtaylor@gmail.com>"]
 readme = "README.md"
@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-betterproto2 = "0.0.2"
+betterproto2 = "^0.1.1"
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
 ruff = "~0.7.4"
 grpclib = "^0.4.1"
@@ -102,13 +102,13 @@ cmd = "ruff check src tests"
 help = "Check the code with the Ruff linter"
 
 [tool.poe.tasks.generate_lib]
-cmd = """
-protoc
-    --plugin=protoc-gen-custom=src/betterproto2_compiler/plugin/main.py
-    --custom_opt=INCLUDE_GOOGLE
-    --custom_out=src/betterproto/lib/std
-    -I /usr/local/include/
-    /usr/local/include/google/protobuf/**/*.proto
+shell = """
+protoc \
+    --plugin=protoc-gen-custom=src/betterproto2_compiler/plugin/main.py \
+    --custom_opt=INCLUDE_GOOGLE \
+    --custom_out=src/betterproto2_compiler/lib \
+    -I /usr/include/ \
+    /usr/include/google/protobuf/**/*.proto
 """
 help = "Regenerate the types in betterproto.lib.std.google"
 
