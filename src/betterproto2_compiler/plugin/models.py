@@ -41,13 +41,7 @@ from typing import (
 )
 
 import betterproto2
-
-from betterproto2_compiler.compile.naming import (
-    pythonize_class_name,
-    pythonize_field_name,
-    pythonize_method_name,
-)
-from betterproto2_compiler.lib.google.protobuf import (
+from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
     FieldDescriptorProto,
@@ -57,6 +51,12 @@ from betterproto2_compiler.lib.google.protobuf import (
     FileDescriptorProto,
     MethodDescriptorProto,
     OneofDescriptorProto,
+)
+
+from betterproto2_compiler.compile.naming import (
+    pythonize_class_name,
+    pythonize_field_name,
+    pythonize_method_name,
 )
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
 

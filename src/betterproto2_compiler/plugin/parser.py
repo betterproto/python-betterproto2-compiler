@@ -2,13 +2,14 @@ import pathlib
 import sys
 from collections.abc import Generator
 
-from betterproto2_compiler.lib.google.protobuf import (
+from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
     FieldDescriptorProto,
     FileDescriptorProto,
     ServiceDescriptorProto,
 )
+
 from betterproto2_compiler.lib.google.protobuf.compiler import (
     CodeGeneratorRequest,
     CodeGeneratorResponse,
