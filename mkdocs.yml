@@ -14,6 +14,7 @@ nav:
   - Betterproto2 compiler:
      - index.md
      - Getting started: getting-started.md
+     - Development: development.md
 
 plugins:
 - mkdocstrings
