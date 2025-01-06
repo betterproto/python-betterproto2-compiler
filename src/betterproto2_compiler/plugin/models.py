@@ -118,28 +118,6 @@ PROTO_PACKED_TYPES = (
 )
 
 
-# TODO patch again to make field optional
-# def monkey_patch_oneof_index():
-#     """
-#     The compiler message types are written for proto2, but we read them as proto3.
-#     For this to work in the case of the oneof_index fields, which depend on being able
-#     to tell whether they were set, we have to treat them as oneof fields. This method
-#     monkey patches the generated classes after the fact to force this behaviour.
-#     """
-#     object.__setattr__(
-#         FieldDescriptorProto.__dataclass_fields__["oneof_index"].metadata[
-#             "betterproto"
-#         ],
-#         "group",
-#         "oneof_index",
-#     )
-#     object.__setattr__(
-#         Field.__dataclass_fields__["oneof_index"].metadata["betterproto"],
-#         "group",
-#         "oneof_index",
-#     )
-
-
 def get_comment(
     proto_file: "FileDescriptorProto",
     path: list[int],
