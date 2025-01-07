@@ -202,29 +202,35 @@ def read_protobuf_type(
                     typing_compiler=output_package.typing_compiler,
                 )
             elif is_oneof(field):
-                OneOfFieldCompiler(
-                    source_file=source_file,
-                    parent=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    OneOfFieldCompiler(
+                        source_file=source_file,
+                        parent=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
             else:
-                FieldCompiler(
-                    source_file=source_file,
-                    parent=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    FieldCompiler(
+                        source_file=source_file,
+                        parent=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
 
         for index, oneof in enumerate(item.oneof_decl):
-            OneofCompiler(
-                source_file=source_file,
-                typing_compiler=output_package.typing_compiler,
-                path=path + [8, index],
-                parent=message_data,
-                proto_obj=oneof,
+            message_data.oneofs.append(
+                OneofCompiler(
+                    source_file=source_file,
+                    typing_compiler=output_package.typing_compiler,
+                    path=path + [8, index],
+                    parent=message_data,
+                    proto_obj=oneof,
+                )
             )
 
     elif isinstance(item, EnumDescriptorProto):
@@ -250,10 +256,14 @@ def read_protobuf_service(
         proto_obj=service,
         path=[6, index],
     )
+    service_data.output_file.services[service_data.proto_name] = service_data
+
     for j, method in enumerate(service.method):
-        ServiceMethodCompiler(
-            source_file=source_file,
-            parent=service_data,
-            proto_obj=method,
-            path=[6, index, 2, j],
+        service_data.methods.append(
+            ServiceMethodCompiler(
+                source_file=source_file,
+                parent=service_data,
+                proto_obj=method,
+                path=[6, index, 2, j],
+            )
         )

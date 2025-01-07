@@ -353,12 +353,6 @@ class FieldCompiler(ProtoContentBase):
     parent: MessageCompiler = PLACEHOLDER
     proto_obj: FieldDescriptorProto = PLACEHOLDER
 
-    def __post_init__(self) -> None:
-        # Add field to message
-        if isinstance(self.parent, MessageCompiler):
-            self.parent.fields.append(self)
-        super().__post_init__()
-
     def get_field_string(self) -> str:
         """Construct string representation of this field as a field."""
         name = f"{self.py_name}"
@@ -554,12 +548,6 @@ class OneofCompiler(ProtoContentBase):
     parent: MessageCompiler = PLACEHOLDER
     proto_obj: OneofDescriptorProto = PLACEHOLDER
 
-    def __post_init__(self) -> None:
-        # Add oneof to message
-        if isinstance(self.parent, MessageCompiler):  # TODO why?
-            self.parent.oneofs.append(self)
-        super().__post_init__()
-
     @property
     def name(self) -> str:
         return self.proto_obj.name
@@ -601,11 +589,6 @@ class ServiceCompiler(ProtoContentBase):
     path: list[int] = PLACEHOLDER
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
 
-    def __post_init__(self) -> None:
-        # Add service to output file
-        self.output_file.services[self.proto_name] = self
-        super().__post_init__()  # check for unset fields
-
     @property
     def proto_name(self) -> str:
         return self.proto_obj.name
@@ -621,12 +604,6 @@ class ServiceMethodCompiler(ProtoContentBase):
     parent: ServiceCompiler
     proto_obj: MethodDescriptorProto
     path: list[int] = PLACEHOLDER
-
-    def __post_init__(self) -> None:
-        # Add method to service
-        self.parent.methods.append(self)
-
-        super().__post_init__()  # check for unset fields
 
     @property
     def py_name(self) -> str:
