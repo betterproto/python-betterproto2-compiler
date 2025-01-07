@@ -149,7 +149,6 @@ class ProtoContentBase:
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
     path: list[int]
-    parent: Union["betterproto2.Message", "OutputTemplate"]
 
     __dataclass_fields__: dict[str, object]
 
@@ -158,17 +157,6 @@ class ProtoContentBase:
         This function is called after all the compilers are created, but before generating the output code.
         """
         pass
-
-    @property
-    def output_file(self) -> "OutputTemplate":
-        current = self
-        while not isinstance(current, OutputTemplate):
-            current = current.parent
-        return current
-
-    @property
-    def request(self) -> "PluginRequestCompiler":
-        return self.output_file.parent_request
 
     @property
     def comment(self) -> str:
@@ -256,6 +244,13 @@ class MessageCompiler(ProtoContentBase):
     builtins_types: set[str] = field(default_factory=set)
 
     @property
+    def output_file(self) -> "OutputTemplate":
+        current = self
+        while not isinstance(current, OutputTemplate):
+            current = current.parent
+        return current
+
+    @property
     def proto_name(self) -> str:
         return self.proto_obj.name
 
@@ -318,6 +313,10 @@ class FieldCompiler(ProtoContentBase):
 
     parent: MessageCompiler
     proto_obj: FieldDescriptorProto
+
+    @property
+    def output_file(self) -> "OutputTemplate":
+        return self.parent.output_file
 
     def get_field_string(self) -> str:
         """Construct string representation of this field as a field."""
@@ -412,7 +411,7 @@ class FieldCompiler(ProtoContentBase):
                 imports=self.output_file.imports_end,
                 source_type=self.proto_obj.type_name,
                 typing_compiler=self.typing_compiler,
-                request=self.request,
+                request=self.output_file.parent_request,
                 pydantic=self.output_file.pydantic_dataclasses,
             )
         else:
@@ -548,6 +547,11 @@ class ServiceCompiler(ProtoContentBase):
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
 
     @property
+    def output_file(self) -> "OutputTemplate":
+        # TODO delete method
+        return self.parent
+
+    @property
     def proto_name(self) -> str:
         return self.proto_obj.name
 
@@ -575,7 +579,7 @@ class ServiceMethodCompiler(ProtoContentBase):
 
     @property
     def route(self) -> str:
-        package_part = f"{self.output_file.package}." if self.output_file.package else ""
+        package_part = f"{self.parent.output_file.package}." if self.parent.output_file.package else ""
         return f"/{package_part}{self.parent.proto_name}/{self.proto_name}"
 
     @property
@@ -589,20 +593,20 @@ class ServiceMethodCompiler(ProtoContentBase):
             String representation of the Python type corresponding to the input message.
         """
         return get_type_reference(
-            package=self.output_file.package,
-            imports=self.output_file.imports_end,
+            package=self.parent.output_file.package,
+            imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.input_type,
-            typing_compiler=self.output_file.typing_compiler,
-            request=self.request,
+            typing_compiler=self.parent.output_file.typing_compiler,
+            request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.output_file.pydantic_dataclasses,
+            pydantic=self.parent.output_file.pydantic_dataclasses,
         )
 
     @property
     def is_input_msg_empty(self: "ServiceMethodCompiler") -> bool:
-        package, name = parse_source_type_name(self.proto_obj.input_type, self.request)
+        package, name = parse_source_type_name(self.proto_obj.input_type, self.parent.output_file.parent_request)
 
-        msg = self.request.output_packages[package].messages[name]
+        msg = self.parent.output_file.parent_request.output_packages[package].messages[name]
 
         return not bool(msg.fields)
 
@@ -628,13 +632,13 @@ class ServiceMethodCompiler(ProtoContentBase):
             String representation of the Python type corresponding to the output message.
         """
         return get_type_reference(
-            package=self.output_file.package,
-            imports=self.output_file.imports_end,
+            package=self.parent.output_file.package,
+            imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.output_type,
-            typing_compiler=self.output_file.typing_compiler,
-            request=self.request,
+            typing_compiler=self.parent.output_file.typing_compiler,
+            request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.output_file.pydantic_dataclasses,
+            pydantic=self.parent.output_file.pydantic_dataclasses,
         )
 
     @property
