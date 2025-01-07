@@ -22,11 +22,6 @@ presented by the protoc plugin.
 
 With this information, the class is able to expose attributes,
 such as a pythonized name, that will be calculated from proto_obj.
-
-The instantiation should also attach a reference to the new object
-into the corresponding place within it's parent object. For example,
-instantiating field `A` with parent message `B` should add a
-reference to `A` to `B`'s `fields` attribute.
 """
 
 import builtins
