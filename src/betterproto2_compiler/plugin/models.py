@@ -355,10 +355,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def repeated(self) -> bool:
-        return self.proto_obj.label == FieldDescriptorProtoLabel.LABEL_REPEATED and not is_map(
-            self.proto_obj,
-            self.message,
-        )
+        return self.proto_obj.label == FieldDescriptorProtoLabel.LABEL_REPEATED
 
     @property
     def optional(self) -> bool:
