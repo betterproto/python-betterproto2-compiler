@@ -43,6 +43,7 @@ jobs:
       run: poetry install
 
     - uses: pre-commit/action@v2.0.3
-    - uses: jakebailey/pyright-action@v2
-      with:
-        working-directory: src
+
+    - name: Pyright
+      shell: bash
+      run: poetry run poe typecheck
