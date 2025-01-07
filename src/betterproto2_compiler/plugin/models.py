@@ -378,11 +378,10 @@ class FieldCompiler(ProtoContentBase):
             args.append(f"wraps={self.field_wraps}")
         if self.optional:
             args.append("optional=True")
-        if self.repeated:
+        elif self.repeated:
             args.append("repeated=True")
-        if self.field_type == FieldType.TYPE_ENUM:
-            t = self.py_type
-            args.append(f"default_factory=lambda: {t}.try_value(0)")
+        elif self.field_type == FieldType.TYPE_ENUM:
+            args.append(f"default_factory=lambda: {self.py_type}.try_value(0)")
         return args
 
     @property
