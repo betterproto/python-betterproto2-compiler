@@ -46,6 +46,7 @@ from betterproto2.lib.google.protobuf import (
     FileDescriptorProto,
     MethodDescriptorProto,
     OneofDescriptorProto,
+    ServiceDescriptorProto,
 )
 
 from betterproto2_compiler.compile.naming import (
@@ -571,7 +572,7 @@ class EnumDefinitionCompiler(MessageCompiler):
 class ServiceCompiler(ProtoContentBase):
     source_file: FileDescriptorProto
     parent: OutputTemplate = PLACEHOLDER
-    proto_obj: DescriptorProto = PLACEHOLDER
+    proto_obj: ServiceDescriptorProto = PLACEHOLDER
     path: list[int] = PLACEHOLDER
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
 
