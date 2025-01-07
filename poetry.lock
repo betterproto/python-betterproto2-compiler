@@ -45,13 +45,13 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "betterproto2"
-version = "0.1.2"
+version = "0.1.3"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "betterproto2-0.1.2-py3-none-any.whl", hash = "sha256:b7f13e9bde08dc16f48ac427b2582fa552466e045d39646e246c69255fc1cfc8"},
-    {file = "betterproto2-0.1.2.tar.gz", hash = "sha256:99acb3ee6ff276ca093bd8bce3387d1512fb9f098cd69dafd2270f07bb5a8dd7"},
+    {file = "betterproto2-0.1.3-py3-none-any.whl", hash = "sha256:2f09de59fd82dd7549392bc922b989ae6cd6b9b9c4a6d34cccb2def78f10cea0"},
+    {file = "betterproto2-0.1.3.tar.gz", hash = "sha256:d35da716773a1eda703944d9b5561ea182992a47f1c3ad887f29411cab622eb4"},
 ]
 
 [package.dependencies]
@@ -1096,13 +1096,13 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.13"
+version = "10.14"
 description = "Extension pack for Python Markdown."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pymdown_extensions-10.13-py3-none-any.whl", hash = "sha256:80bc33d715eec68e683e04298946d47d78c7739e79d808203df278ee8ef89428"},
-    {file = "pymdown_extensions-10.13.tar.gz", hash = "sha256:e0b351494dc0d8d14a1f52b39b1499a00ef1566b4ba23dc74f1eba75c736f5dd"},
+    {file = "pymdown_extensions-10.14-py3-none-any.whl", hash = "sha256:202481f716cc8250e4be8fce997781ebf7917701b59652458ee47f2401f818b5"},
+    {file = "pymdown_extensions-10.14.tar.gz", hash = "sha256:741bd7c4ff961ba40b7528d32284c53bc436b8b1645e8e37c3e57770b8700a34"},
 ]
 
 [package.dependencies]
@@ -1110,7 +1110,7 @@ markdown = ">=3.6"
 pyyaml = "*"
 
 [package.extras]
-extra = ["pygments (>=2.12)"]
+extra = ["pygments (>=2.19.1)"]
 
 [[package]]
 name = "pytest"
@@ -1553,4 +1553,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "eabab904df2206d370fa2fe7d269305167859e1ae9c29a7154016388aaaa9f72"
+content-hash = "6fd1165905f6d79a7675f60c7f76bb9a0d2e1cd0278a276e58ee03dc9bb8f39f"

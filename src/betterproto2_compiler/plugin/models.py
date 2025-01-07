@@ -33,6 +33,7 @@ from dataclasses import (
 )
 
 import betterproto2
+from betterproto2 import unwrap
 from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
@@ -111,7 +112,7 @@ def get_comment(
     proto_file: "FileDescriptorProto",
     path: list[int],
 ) -> str:
-    for sci_loc in proto_file.source_code_info.location:
+    for sci_loc in unwrap(proto_file.source_code_info).location:
         if list(sci_loc.path) == path:
             all_comments = list(sci_loc.leading_detached_comments)
             if sci_loc.leading_comments:
@@ -429,15 +430,15 @@ class OneOfFieldCompiler(FieldCompiler):
     @property
     def betterproto_field_args(self) -> list[str]:
         args = super().betterproto_field_args
-        group = self.message.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
+        group = self.message.proto_obj.oneof_decl[unwrap(self.proto_obj.oneof_index)].name
         args.append(f'group="{group}"')
         return args
 
 
 @dataclass(kw_only=True)
 class MapEntryCompiler(FieldCompiler):
-    py_k_type: str | None = None
-    py_v_type: str | None = None
+    py_k_type: str = ""
+    py_v_type: str = ""
     proto_k_type: str = ""
     proto_v_type: str = ""
 
@@ -445,7 +446,7 @@ class MapEntryCompiler(FieldCompiler):
         """Explore nested types and set k_type and v_type if unset."""
         map_entry = f"{self.proto_obj.name.replace('_', '').lower()}entry"
         for nested in self.message.proto_obj.nested_type:
-            if nested.name.replace("_", "").lower() == map_entry and nested.options.map_entry:
+            if nested.name.replace("_", "").lower() == map_entry and unwrap(nested.options).map_entry:
                 # Get Python types
                 self.py_k_type = FieldCompiler(
                     source_file=self.source_file,
@@ -463,8 +464,8 @@ class MapEntryCompiler(FieldCompiler):
                 ).py_type
 
                 # Get proto types
-                self.proto_k_type = FieldDescriptorProtoType(nested.field[0].type).name
-                self.proto_v_type = FieldDescriptorProtoType(nested.field[1].type).name
+                self.proto_k_type = unwrap(FieldDescriptorProtoType(nested.field[0].type).name)
+                self.proto_v_type = unwrap(FieldDescriptorProtoType(nested.field[1].type).name)
                 return
 
         raise ValueError("can't find enum")
