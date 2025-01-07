@@ -530,15 +530,10 @@ class EnumDefinitionCompiler(MessageCompiler):
 @dataclass(kw_only=True)
 class ServiceCompiler(ProtoContentBase):
     source_file: FileDescriptorProto
-    parent: OutputTemplate
+    output_file: OutputTemplate
     proto_obj: ServiceDescriptorProto
     path: list[int]
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
-
-    @property
-    def output_file(self) -> "OutputTemplate":
-        # TODO delete method
-        return self.parent
 
     @property
     def proto_name(self) -> str:

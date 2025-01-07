@@ -254,7 +254,7 @@ def read_protobuf_service(
 ) -> None:
     service_data = ServiceCompiler(
         source_file=source_file,
-        parent=output_package,
+        output_file=output_package,
         proto_obj=service,
         path=[6, index],
     )
