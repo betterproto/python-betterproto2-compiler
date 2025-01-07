@@ -120,20 +120,20 @@ class ModuleValidator:
                 self.evaluate_import(line)
 
         # Evaluate Classes.
-        elif line.startswith("class "):
-            class_name = re.search(r"class (\w+)", line).group(1)
+        elif match := re.search(r"^class (\w+)", line):
+            class_name = match.group(1)
             if class_name:
                 self.add_import(class_name, self.line_number, line)
 
         # Evaluate Functions.
-        elif line.startswith("def "):
-            function_name = re.search(r"def (\w+)", line).group(1)
+        elif match := re.search(r"^def (\w+)", line):
+            function_name = match.group(1)
             if function_name:
                 self.add_import(function_name, self.line_number, line)
 
         # Evaluate direct assignments.
-        elif "=" in line:
-            assignment = re.search(r"(\w+)\s*=", line).group(1)
+        elif match := re.search(r"^(\w+)\s*=", line):
+            assignment = match.group(1)
             if assignment:
                 self.add_import(assignment, self.line_number, line)
 
