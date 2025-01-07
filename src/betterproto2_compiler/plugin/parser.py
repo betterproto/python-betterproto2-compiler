@@ -192,6 +192,8 @@ def read_protobuf_type(
             path=path,
             typing_compiler=output_package.typing_compiler,
         )
+        output_package.messages[message_data.proto_name] = message_data
+
         for index, field in enumerate(item.field):
             if is_map(field, item):
                 MapEntryCompiler(
@@ -235,13 +237,14 @@ def read_protobuf_type(
 
     elif isinstance(item, EnumDescriptorProto):
         # Enum
-        EnumDefinitionCompiler(
+        enum = EnumDefinitionCompiler(
             source_file=source_file,
             parent=output_package,
             proto_obj=item,
             path=path,
             typing_compiler=output_package.typing_compiler,
         )
+        output_package.enums[enum.proto_name] = enum
 
 
 def read_protobuf_service(

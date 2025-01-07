@@ -269,15 +269,6 @@ class MessageCompiler(ProtoContentBase):
     oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
 
-    def __post_init__(self) -> None:
-        # Add message to output file
-        if isinstance(self.parent, OutputTemplate):
-            if isinstance(self, EnumDefinitionCompiler):
-                self.output_file.enums[self.proto_name] = self
-            else:
-                self.output_file.messages[self.proto_name] = self
-        super().__post_init__()
-
     @property
     def proto_name(self) -> str:
         return self.proto_obj.name
