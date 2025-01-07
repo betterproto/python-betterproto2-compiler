@@ -45,13 +45,13 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "betterproto2"
-version = "0.1.1"
+version = "0.1.2"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "betterproto2-0.1.1-py3-none-any.whl", hash = "sha256:c00cf0a0567ddbd32f2bbc52abb49eb1473179ec74fff524c73a29c915d35936"},
-    {file = "betterproto2-0.1.1.tar.gz", hash = "sha256:ff53a796907b24d7ed3433f0b2c9c356a0eda2867ea266d2791f5f5bb3925f33"},
+    {file = "betterproto2-0.1.2-py3-none-any.whl", hash = "sha256:b7f13e9bde08dc16f48ac427b2582fa552466e045d39646e246c69255fc1cfc8"},
+    {file = "betterproto2-0.1.2.tar.gz", hash = "sha256:99acb3ee6ff276ca093bd8bce3387d1512fb9f098cd69dafd2270f07bb5a8dd7"},
 ]
 
 [package.dependencies]
@@ -1082,13 +1082,13 @@ files = [
 
 [[package]]
 name = "pygments"
-version = "2.19.0"
+version = "2.19.1"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pygments-2.19.0-py3-none-any.whl", hash = "sha256:4755e6e64d22161d5b61432c0600c923c5927214e7c956e31c23923c89251a9b"},
-    {file = "pygments-2.19.0.tar.gz", hash = "sha256:afc4146269910d4bdfabcd27c24923137a74d562a23a320a41a55ad303e19783"},
+    {file = "pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"},
+    {file = "pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"},
 ]
 
 [package.extras]
@@ -1553,4 +1553,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "060e31d81903103c44371d08d4da79f6c072cfa6971734f6dd9e1bb370c048b4"
+content-hash = "eabab904df2206d370fa2fe7d269305167859e1ae9c29a7154016388aaaa9f72"
