@@ -246,7 +246,7 @@ class MessageCompiler(ProtoContentBase):
 
     @property
     def deprecated(self) -> bool:
-        return self.proto_obj.options and self.proto_obj.options.deprecated
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
 
     @property
     def deprecated_fields(self) -> Iterator[str]:
@@ -335,7 +335,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def deprecated(self) -> bool:
-        return self.proto_obj.options and self.proto_obj.options.deprecated
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
 
     @property
     def use_builtins(self) -> bool:
@@ -439,8 +439,8 @@ class OneOfFieldCompiler(FieldCompiler):
 
 @dataclass(kw_only=True)
 class MapEntryCompiler(FieldCompiler):
-    py_k_type: type | None = None
-    py_v_type: type | None = None
+    py_k_type: str | None = None
+    py_v_type: str | None = None
     proto_k_type: str = ""
     proto_v_type: str = ""
 
@@ -641,4 +641,4 @@ class ServiceMethodCompiler(ProtoContentBase):
 
     @property
     def deprecated(self) -> bool:
-        return self.proto_obj.options and self.proto_obj.options.deprecated
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
