@@ -70,9 +70,9 @@ help = "Run tests"
 script = "tests.generate:main"
 help = "Generate test cases"
 
-[tool.poe.tasks.types]
-cmd  = "mypy src --ignore-missing-imports"
-help = "Check types with mypy"
+[tool.poe.tasks.typecheck]
+cmd  = "pyright src"
+help = "Typecheck the code with Pyright"
 
 [tool.poe.tasks.format]
 sequence = ["_format", "_sort-imports"]
