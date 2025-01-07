@@ -305,18 +305,7 @@ def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProt
 def is_oneof(proto_field_obj: FieldDescriptorProto) -> bool:
     """
     True if proto_field_obj is a OneOf, otherwise False.
-
-    .. warning::
-        TODO update comment
-        Becuase the message from protoc is defined in proto2, and betterproto works with
-        proto3, and interpreting the FieldDescriptorProto.oneof_index field requires
-        distinguishing between default and unset values (which proto3 doesn't support),
-        we have to hack the generated FieldDescriptorProto class for this to work.
-        The hack consists of setting group="oneof_index" in the field metadata,
-        essentially making oneof_index the sole member of a one_of group, which allows
-        us to tell whether it was set, via the which_one_of interface.
     """
-
     return not proto_field_obj.proto3_optional and proto_field_obj.oneof_index is not None
 
 
