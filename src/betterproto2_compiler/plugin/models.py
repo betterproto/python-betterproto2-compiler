@@ -477,7 +477,7 @@ class MapEntryCompiler(FieldCompiler):
             f"betterproto2.{self.proto_v_type}))"
         )
         if self.py_name in dir(builtins):
-            self.parent.builtins_types.add(self.py_name)
+            self.message.builtins_types.add(self.py_name)
         return f'{self.py_name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
