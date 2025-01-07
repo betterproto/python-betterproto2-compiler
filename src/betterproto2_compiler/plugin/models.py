@@ -162,10 +162,6 @@ class ProtoContentBase:
         """
         return get_comment(proto_file=self.source_file, path=self.path)
 
-    @property
-    def deprecated(self) -> bool:
-        return self.proto_obj.options and self.proto_obj.options.deprecated
-
 
 @dataclass(kw_only=True)
 class PluginRequestCompiler:
@@ -247,6 +243,10 @@ class MessageCompiler(ProtoContentBase):
     @property
     def py_name(self) -> str:
         return pythonize_class_name(self.proto_name)
+
+    @property
+    def deprecated(self) -> bool:
+        return self.proto_obj.options and self.proto_obj.options.deprecated
 
     @property
     def deprecated_fields(self) -> Iterator[str]:
@@ -332,6 +332,10 @@ class FieldCompiler(ProtoContentBase):
         elif self.field_type == FieldType.TYPE_ENUM:
             args.append(f"default_factory=lambda: {self.py_type}.try_value(0)")
         return args
+
+    @property
+    def deprecated(self) -> bool:
+        return self.proto_obj.options and self.proto_obj.options.deprecated
 
     @property
     def use_builtins(self) -> bool:
@@ -634,3 +638,7 @@ class ServiceMethodCompiler(ProtoContentBase):
     @property
     def server_streaming(self) -> bool:
         return self.proto_obj.server_streaming
+
+    @property
+    def deprecated(self) -> bool:
+        return self.proto_obj.options and self.proto_obj.options.deprecated
