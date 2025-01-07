@@ -196,12 +196,14 @@ def read_protobuf_type(
 
         for index, field in enumerate(item.field):
             if is_map(field, item):
-                MapEntryCompiler(
-                    source_file=source_file,
-                    message=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    MapEntryCompiler(
+                        source_file=source_file,
+                        message=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
             elif is_oneof(field):
                 message_data.fields.append(

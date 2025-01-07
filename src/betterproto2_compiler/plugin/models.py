@@ -448,15 +448,17 @@ class MapEntryCompiler(FieldCompiler):
                 # Get Python types
                 self.py_k_type = FieldCompiler(
                     source_file=self.source_file,
-                    parent=self,
                     proto_obj=nested.field[0],  # key
                     typing_compiler=self.typing_compiler,
+                    path=[],
+                    message=self.message,
                 ).py_type
                 self.py_v_type = FieldCompiler(
                     source_file=self.source_file,
-                    parent=self,
                     proto_obj=nested.field[1],  # value
                     typing_compiler=self.typing_compiler,
+                    path=[],
+                    message=self.message,
                 ).py_type
 
                 # Get proto types
