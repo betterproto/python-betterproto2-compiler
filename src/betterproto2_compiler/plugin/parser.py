@@ -187,7 +187,7 @@ def read_protobuf_type(
         # Process Message
         message_data = MessageCompiler(
             source_file=source_file,
-            parent=output_package,
+            output_file=output_package,
             proto_obj=item,
             path=path,
             typing_compiler=output_package.typing_compiler,
@@ -198,7 +198,7 @@ def read_protobuf_type(
             if is_map(field, item):
                 MapEntryCompiler(
                     source_file=source_file,
-                    parent=message_data,
+                    message=message_data,
                     proto_obj=field,
                     path=path + [2, index],
                     typing_compiler=output_package.typing_compiler,
@@ -207,7 +207,7 @@ def read_protobuf_type(
                 message_data.fields.append(
                     OneOfFieldCompiler(
                         source_file=source_file,
-                        parent=message_data,
+                        message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
                         typing_compiler=output_package.typing_compiler,
@@ -217,7 +217,7 @@ def read_protobuf_type(
                 message_data.fields.append(
                     FieldCompiler(
                         source_file=source_file,
-                        parent=message_data,
+                        message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
                         typing_compiler=output_package.typing_compiler,
@@ -238,7 +238,7 @@ def read_protobuf_type(
         # Enum
         enum = EnumDefinitionCompiler(
             source_file=source_file,
-            parent=output_package,
+            output_file=output_package,
             proto_obj=item,
             path=path,
             typing_compiler=output_package.typing_compiler,

@@ -233,16 +233,12 @@ class MessageCompiler(ProtoContentBase):
 
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    parent: OutputTemplate
+    output_file: OutputTemplate
     proto_obj: DescriptorProto
     path: list[int]
     fields: list["FieldCompiler"] = field(default_factory=list)
     oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
-
-    @property
-    def output_file(self) -> "OutputTemplate":
-        return self.parent
 
     @property
     def proto_name(self) -> str:
@@ -305,12 +301,12 @@ class FieldCompiler(ProtoContentBase):
     path: list[int]
     builtins_types: set[str] = field(default_factory=set)
 
-    parent: MessageCompiler
+    message: MessageCompiler
     proto_obj: FieldDescriptorProto
 
     @property
     def output_file(self) -> "OutputTemplate":
-        return self.parent.output_file
+        return self.message.output_file
 
     def get_field_string(self) -> str:
         """Construct string representation of this field as a field."""
@@ -321,7 +317,7 @@ class FieldCompiler(ProtoContentBase):
             f"betterproto2.field({self.proto_obj.number}, betterproto2.{str(self.field_type)}{field_args})"
         )
         if self.py_name in dir(builtins):
-            self.parent.builtins_types.add(self.py_name)
+            self.message.builtins_types.add(self.py_name)
         return f'{name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
@@ -339,7 +335,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def use_builtins(self) -> bool:
-        return self.py_type in self.parent.builtins_types or (
+        return self.py_type in self.message.builtins_types or (
             self.py_type == self.py_name and self.py_name in dir(builtins)
         )
 
@@ -357,7 +353,7 @@ class FieldCompiler(ProtoContentBase):
     def repeated(self) -> bool:
         return self.proto_obj.label == FieldDescriptorProtoLabel.LABEL_REPEATED and not is_map(
             self.proto_obj,
-            self.parent,
+            self.message,
         )
 
     @property
@@ -432,7 +428,7 @@ class OneOfFieldCompiler(FieldCompiler):
     @property
     def betterproto_field_args(self) -> list[str]:
         args = super().betterproto_field_args
-        group = self.parent.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
+        group = self.message.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
         args.append(f'group="{group}"')
         return args
 
@@ -447,7 +443,7 @@ class MapEntryCompiler(FieldCompiler):
     def ready(self) -> None:
         """Explore nested types and set k_type and v_type if unset."""
         map_entry = f"{self.proto_obj.name.replace('_', '').lower()}entry"
-        for nested in self.parent.proto_obj.nested_type:
+        for nested in self.message.proto_obj.nested_type:
             if nested.name.replace("_", "").lower() == map_entry and nested.options.map_entry:
                 # Get Python types
                 self.py_k_type = FieldCompiler(
