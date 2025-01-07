@@ -26,7 +26,7 @@ such as a pythonized name, that will be calculated from proto_obj.
 
 import builtins
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator
 from dataclasses import (
     dataclass,
     field,
@@ -219,7 +219,7 @@ class OutputTemplate:
 
     parent_request: PluginRequestCompiler
     package_proto_obj: FileDescriptorProto
-    input_files: list[str] = field(default_factory=list)
+    input_files: list[FileDescriptorProto] = field(default_factory=list)
     imports_end: set[str] = field(default_factory=set)
     messages: dict[str, "MessageCompiler"] = field(default_factory=dict)
     enums: dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
@@ -240,15 +240,15 @@ class OutputTemplate:
         return self.package_proto_obj.package
 
     @property
-    def input_filenames(self) -> Iterable[str]:
+    def input_filenames(self) -> list[str]:
         """Names of the input files used to build this output.
 
         Returns
         -------
-        Iterable[str]
+        list[str]
             Names of the input files used to build this output.
         """
-        return sorted(f.name for f in self.input_files)
+        return sorted([f.name for f in self.input_files])
 
 
 @dataclass
