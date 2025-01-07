@@ -31,9 +31,6 @@ from dataclasses import (
     dataclass,
     field,
 )
-from typing import (
-    Union,
-)
 
 import betterproto2
 from betterproto2.lib.google.protobuf import (
@@ -236,19 +233,16 @@ class MessageCompiler(ProtoContentBase):
 
     source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    parent: Union["MessageCompiler", OutputTemplate]
+    parent: OutputTemplate
     proto_obj: DescriptorProto
     path: list[int]
-    fields: list[Union["FieldCompiler", "MessageCompiler"]] = field(default_factory=list)
+    fields: list["FieldCompiler"] = field(default_factory=list)
     oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
 
     @property
     def output_file(self) -> "OutputTemplate":
-        current = self
-        while not isinstance(current, OutputTemplate):
-            current = current.parent
-        return current
+        return self.parent
 
     @property
     def proto_name(self) -> str:
@@ -503,7 +497,6 @@ class OneofCompiler(ProtoContentBase):
     typing_compiler: TypingCompiler
     path: list[int]
 
-    parent: MessageCompiler
     proto_obj: OneofDescriptorProto
 
     @property

@@ -230,7 +230,6 @@ def read_protobuf_type(
                     source_file=source_file,
                     typing_compiler=output_package.typing_compiler,
                     path=path + [8, index],
-                    parent=message_data,
                     proto_obj=oneof,
                 )
             )
