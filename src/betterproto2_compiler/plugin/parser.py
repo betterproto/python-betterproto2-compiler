@@ -175,7 +175,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
 
 
 def read_protobuf_type(
-    item: DescriptorProto,
+    item: DescriptorProto | EnumDescriptorProto,
     path: list[int],
     source_file: "FileDescriptorProto",
     output_package: OutputTemplate,
