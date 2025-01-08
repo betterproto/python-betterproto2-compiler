@@ -22,25 +22,18 @@ presented by the protoc plugin.
 
 With this information, the class is able to expose attributes,
 such as a pythonized name, that will be calculated from proto_obj.
-
-The instantiation should also attach a reference to the new object
-into the corresponding place within it's parent object. For example,
-instantiating field `A` with parent message `B` should add a
-reference to `A` to `B`'s `fields` attribute.
 """
 
 import builtins
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator
 from dataclasses import (
     dataclass,
     field,
 )
-from typing import (
-    Union,
-)
 
 import betterproto2
+from betterproto2 import unwrap
 from betterproto2.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
@@ -51,6 +44,7 @@ from betterproto2.lib.google.protobuf import (
     FileDescriptorProto,
     MethodDescriptorProto,
     OneofDescriptorProto,
+    ServiceDescriptorProto,
 )
 
 from betterproto2_compiler.compile.naming import (
@@ -71,10 +65,6 @@ from .typing_compiler import (
     DirectImportTypingCompiler,
     TypingCompiler,
 )
-
-# Create a unique placeholder to deal with
-# https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses
-PLACEHOLDER = object()
 
 # Organize proto types into categories
 PROTO_FLOAT_TYPES = (
@@ -122,7 +112,7 @@ def get_comment(
     proto_file: "FileDescriptorProto",
     path: list[int],
 ) -> str:
-    for sci_loc in proto_file.source_code_info.location:
+    for sci_loc in unwrap(proto_file.source_code_info).location:
         if list(sci_loc.path) == path:
             all_comments = list(sci_loc.leading_detached_comments)
             if sci_loc.leading_comments:
@@ -151,21 +141,12 @@ def get_comment(
     return ""
 
 
+@dataclass(kw_only=True)
 class ProtoContentBase:
     """Methods common to MessageCompiler, ServiceCompiler and ServiceMethodCompiler."""
 
     source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
     path: list[int]
-    parent: Union["betterproto2.Message", "OutputTemplate"]
-
-    __dataclass_fields__: dict[str, object]
-
-    def __post_init__(self) -> None:
-        """Checks that no fake default fields were left as placeholders."""
-        for field_name, field_val in self.__dataclass_fields__.items():
-            if field_val is PLACEHOLDER:
-                raise ValueError(f"`{field_name}` is a required field.")
 
     def ready(self) -> None:
         """
@@ -174,29 +155,14 @@ class ProtoContentBase:
         pass
 
     @property
-    def output_file(self) -> "OutputTemplate":
-        current = self
-        while not isinstance(current, OutputTemplate):
-            current = current.parent
-        return current
-
-    @property
-    def request(self) -> "PluginRequestCompiler":
-        return self.output_file.parent_request
-
-    @property
     def comment(self) -> str:
         """Crawl the proto source code and retrieve comments
         for this object.
         """
         return get_comment(proto_file=self.source_file, path=self.path)
 
-    @property
-    def deprecated(self) -> bool:
-        return self.proto_obj.options and self.proto_obj.options.deprecated
 
-
-@dataclass
+@dataclass(kw_only=True)
 class PluginRequestCompiler:
     plugin_request_obj: CodeGeneratorRequest
     output_packages: dict[str, "OutputTemplate"] = field(default_factory=dict)
@@ -213,7 +179,7 @@ class PluginRequestCompiler:
         return [msg for output in self.output_packages.values() for msg in output.messages.values()]
 
 
-@dataclass
+@dataclass(kw_only=True)
 class OutputTemplate:
     """Representation of an output .py file.
 
@@ -224,7 +190,7 @@ class OutputTemplate:
 
     parent_request: PluginRequestCompiler
     package_proto_obj: FileDescriptorProto
-    input_files: list[str] = field(default_factory=list)
+    input_files: list[FileDescriptorProto] = field(default_factory=list)
     imports_end: set[str] = field(default_factory=set)
     messages: dict[str, "MessageCompiler"] = field(default_factory=dict)
     enums: dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
@@ -245,38 +211,26 @@ class OutputTemplate:
         return self.package_proto_obj.package
 
     @property
-    def input_filenames(self) -> Iterable[str]:
+    def input_filenames(self) -> list[str]:
         """Names of the input files used to build this output.
 
         Returns
         -------
-        Iterable[str]
+        list[str]
             Names of the input files used to build this output.
         """
-        return sorted(f.name for f in self.input_files)
+        return sorted([f.name for f in self.input_files])
 
 
-@dataclass
+@dataclass(kw_only=True)
 class MessageCompiler(ProtoContentBase):
     """Representation of a protobuf message."""
 
-    source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
-    parent: Union["MessageCompiler", OutputTemplate] = PLACEHOLDER
-    proto_obj: DescriptorProto = PLACEHOLDER
-    path: list[int] = PLACEHOLDER
-    fields: list[Union["FieldCompiler", "MessageCompiler"]] = field(default_factory=list)
+    output_file: OutputTemplate
+    proto_obj: DescriptorProto
+    fields: list["FieldCompiler"] = field(default_factory=list)
     oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
-
-    def __post_init__(self) -> None:
-        # Add message to output file
-        if isinstance(self.parent, OutputTemplate):
-            if isinstance(self, EnumDefinitionCompiler):
-                self.output_file.enums[self.proto_name] = self
-            else:
-                self.output_file.messages[self.proto_name] = self
-        super().__post_init__()
 
     @property
     def proto_name(self) -> str:
@@ -285,6 +239,10 @@ class MessageCompiler(ProtoContentBase):
     @property
     def py_name(self) -> str:
         return pythonize_class_name(self.proto_name)
+
+    @property
+    def deprecated(self) -> bool:
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
 
     @property
     def deprecated_fields(self) -> Iterator[str]:
@@ -328,36 +286,21 @@ def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProt
 def is_oneof(proto_field_obj: FieldDescriptorProto) -> bool:
     """
     True if proto_field_obj is a OneOf, otherwise False.
-
-    .. warning::
-        TODO update comment
-        Becuase the message from protoc is defined in proto2, and betterproto works with
-        proto3, and interpreting the FieldDescriptorProto.oneof_index field requires
-        distinguishing between default and unset values (which proto3 doesn't support),
-        we have to hack the generated FieldDescriptorProto class for this to work.
-        The hack consists of setting group="oneof_index" in the field metadata,
-        essentially making oneof_index the sole member of a one_of group, which allows
-        us to tell whether it was set, via the which_one_of interface.
     """
-
     return not proto_field_obj.proto3_optional and proto_field_obj.oneof_index is not None
 
 
-@dataclass
+@dataclass(kw_only=True)
 class FieldCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    path: list[int] = PLACEHOLDER
     builtins_types: set[str] = field(default_factory=set)
 
-    parent: MessageCompiler = PLACEHOLDER
-    proto_obj: FieldDescriptorProto = PLACEHOLDER
+    message: MessageCompiler
+    proto_obj: FieldDescriptorProto
 
-    def __post_init__(self) -> None:
-        # Add field to message
-        if isinstance(self.parent, MessageCompiler):
-            self.parent.fields.append(self)
-        super().__post_init__()
+    @property
+    def output_file(self) -> "OutputTemplate":
+        return self.message.output_file
 
     def get_field_string(self) -> str:
         """Construct string representation of this field as a field."""
@@ -368,7 +311,7 @@ class FieldCompiler(ProtoContentBase):
             f"betterproto2.field({self.proto_obj.number}, betterproto2.{str(self.field_type)}{field_args})"
         )
         if self.py_name in dir(builtins):
-            self.parent.builtins_types.add(self.py_name)
+            self.message.builtins_types.add(self.py_name)
         return f'{name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
@@ -385,8 +328,12 @@ class FieldCompiler(ProtoContentBase):
         return args
 
     @property
+    def deprecated(self) -> bool:
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
+
+    @property
     def use_builtins(self) -> bool:
-        return self.py_type in self.parent.builtins_types or (
+        return self.py_type in self.message.builtins_types or (
             self.py_type == self.py_name and self.py_name in dir(builtins)
         )
 
@@ -402,10 +349,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def repeated(self) -> bool:
-        return self.proto_obj.label == FieldDescriptorProtoLabel.LABEL_REPEATED and not is_map(
-            self.proto_obj,
-            self.parent,
-        )
+        return self.proto_obj.label == FieldDescriptorProtoLabel.LABEL_REPEATED
 
     @property
     def optional(self) -> bool:
@@ -452,7 +396,7 @@ class FieldCompiler(ProtoContentBase):
                 imports=self.output_file.imports_end,
                 source_type=self.proto_obj.type_name,
                 typing_compiler=self.typing_compiler,
-                request=self.request,
+                request=self.output_file.parent_request,
                 pydantic=self.output_file.pydantic_dataclasses,
             )
         else:
@@ -470,7 +414,7 @@ class FieldCompiler(ProtoContentBase):
         return py_type
 
 
-@dataclass
+@dataclass(kw_only=True)
 class OneOfFieldCompiler(FieldCompiler):
     @property
     def optional(self) -> bool:
@@ -479,47 +423,42 @@ class OneOfFieldCompiler(FieldCompiler):
     @property
     def betterproto_field_args(self) -> list[str]:
         args = super().betterproto_field_args
-        group = self.parent.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
+        group = self.message.proto_obj.oneof_decl[unwrap(self.proto_obj.oneof_index)].name
         args.append(f'group="{group}"')
         return args
 
 
-@dataclass
+@dataclass(kw_only=True)
 class MapEntryCompiler(FieldCompiler):
-    py_k_type: type | None = None
-    py_v_type: type | None = None
+    py_k_type: str = ""
+    py_v_type: str = ""
     proto_k_type: str = ""
     proto_v_type: str = ""
-
-    def __post_init__(self):
-        map_entry = f"{self.proto_obj.name.replace('_', '').lower()}entry"
-        for nested in self.parent.proto_obj.nested_type:
-            if nested.name.replace("_", "").lower() == map_entry and nested.options.map_entry:
-                pass
-        return super().__post_init__()
 
     def ready(self) -> None:
         """Explore nested types and set k_type and v_type if unset."""
         map_entry = f"{self.proto_obj.name.replace('_', '').lower()}entry"
-        for nested in self.parent.proto_obj.nested_type:
-            if nested.name.replace("_", "").lower() == map_entry and nested.options.map_entry:
+        for nested in self.message.proto_obj.nested_type:
+            if nested.name.replace("_", "").lower() == map_entry and unwrap(nested.options).map_entry:
                 # Get Python types
                 self.py_k_type = FieldCompiler(
                     source_file=self.source_file,
-                    parent=self,
                     proto_obj=nested.field[0],  # key
                     typing_compiler=self.typing_compiler,
+                    path=[],
+                    message=self.message,
                 ).py_type
                 self.py_v_type = FieldCompiler(
                     source_file=self.source_file,
-                    parent=self,
                     proto_obj=nested.field[1],  # value
                     typing_compiler=self.typing_compiler,
+                    path=[],
+                    message=self.message,
                 ).py_type
 
                 # Get proto types
-                self.proto_k_type = FieldDescriptorProtoType(nested.field[0].type).name
-                self.proto_v_type = FieldDescriptorProtoType(nested.field[1].type).name
+                self.proto_k_type = unwrap(FieldDescriptorProtoType(nested.field[0].type).name)
+                self.proto_v_type = unwrap(FieldDescriptorProtoType(nested.field[1].type).name)
                 return
 
         raise ValueError("can't find enum")
@@ -533,7 +472,7 @@ class MapEntryCompiler(FieldCompiler):
             f"betterproto2.{self.proto_v_type}))"
         )
         if self.py_name in dir(builtins):
-            self.parent.builtins_types.add(self.py_name)
+            self.message.builtins_types.add(self.py_name)
         return f'{self.py_name}: "{self.annotation}" = {betterproto_field_type}'
 
     @property
@@ -545,34 +484,24 @@ class MapEntryCompiler(FieldCompiler):
         return False  # maps cannot be repeated
 
 
-@dataclass
+@dataclass(kw_only=True)
 class OneofCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
-    path: list[int] = PLACEHOLDER
-
-    parent: MessageCompiler = PLACEHOLDER
-    proto_obj: OneofDescriptorProto = PLACEHOLDER
-
-    def __post_init__(self) -> None:
-        # Add oneof to message
-        if isinstance(self.parent, MessageCompiler):  # TODO why?
-            self.parent.oneofs.append(self)
-        super().__post_init__()
+    proto_obj: OneofDescriptorProto
 
     @property
     def name(self) -> str:
         return self.proto_obj.name
 
 
-@dataclass
-class EnumDefinitionCompiler(MessageCompiler):
+@dataclass(kw_only=True)
+class EnumDefinitionCompiler(ProtoContentBase):
     """Representation of a proto Enum definition."""
 
-    proto_obj: EnumDescriptorProto = PLACEHOLDER
-    entries: list["EnumDefinitionCompiler.EnumEntry"] = PLACEHOLDER
+    output_file: OutputTemplate
+    proto_obj: EnumDescriptorProto
+    entries: list["EnumDefinitionCompiler.EnumEntry"] = field(default_factory=list)
 
-    @dataclass(unsafe_hash=True)
+    @dataclass(unsafe_hash=True, kw_only=True)
     class EnumEntry:
         """Representation of an Enum entry."""
 
@@ -590,21 +519,25 @@ class EnumDefinitionCompiler(MessageCompiler):
             )
             for entry_number, entry_proto_value in enumerate(self.proto_obj.value)
         ]
-        super().__post_init__()  # call MessageCompiler __post_init__
+
+    @property
+    def proto_name(self) -> str:
+        return self.proto_obj.name
+
+    @property
+    def py_name(self) -> str:
+        return pythonize_class_name(self.proto_name)
+
+    @property
+    def deprecated(self) -> bool:
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ServiceCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
-    parent: OutputTemplate = PLACEHOLDER
-    proto_obj: DescriptorProto = PLACEHOLDER
-    path: list[int] = PLACEHOLDER
+    output_file: OutputTemplate
+    proto_obj: ServiceDescriptorProto
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        # Add service to output file
-        self.output_file.services[self.proto_name] = self
-        super().__post_init__()  # check for unset fields
 
     @property
     def proto_name(self) -> str:
@@ -615,18 +548,10 @@ class ServiceCompiler(ProtoContentBase):
         return pythonize_class_name(self.proto_name)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ServiceMethodCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
     parent: ServiceCompiler
     proto_obj: MethodDescriptorProto
-    path: list[int] = PLACEHOLDER
-
-    def __post_init__(self) -> None:
-        # Add method to service
-        self.parent.methods.append(self)
-
-        super().__post_init__()  # check for unset fields
 
     @property
     def py_name(self) -> str:
@@ -640,7 +565,7 @@ class ServiceMethodCompiler(ProtoContentBase):
 
     @property
     def route(self) -> str:
-        package_part = f"{self.output_file.package}." if self.output_file.package else ""
+        package_part = f"{self.parent.output_file.package}." if self.parent.output_file.package else ""
         return f"/{package_part}{self.parent.proto_name}/{self.proto_name}"
 
     @property
@@ -654,20 +579,20 @@ class ServiceMethodCompiler(ProtoContentBase):
             String representation of the Python type corresponding to the input message.
         """
         return get_type_reference(
-            package=self.output_file.package,
-            imports=self.output_file.imports_end,
+            package=self.parent.output_file.package,
+            imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.input_type,
-            typing_compiler=self.output_file.typing_compiler,
-            request=self.request,
+            typing_compiler=self.parent.output_file.typing_compiler,
+            request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.output_file.pydantic_dataclasses,
+            pydantic=self.parent.output_file.pydantic_dataclasses,
         )
 
     @property
     def is_input_msg_empty(self: "ServiceMethodCompiler") -> bool:
-        package, name = parse_source_type_name(self.proto_obj.input_type, self.request)
+        package, name = parse_source_type_name(self.proto_obj.input_type, self.parent.output_file.parent_request)
 
-        msg = self.request.output_packages[package].messages[name]
+        msg = self.parent.output_file.parent_request.output_packages[package].messages[name]
 
         return not bool(msg.fields)
 
@@ -693,13 +618,13 @@ class ServiceMethodCompiler(ProtoContentBase):
             String representation of the Python type corresponding to the output message.
         """
         return get_type_reference(
-            package=self.output_file.package,
-            imports=self.output_file.imports_end,
+            package=self.parent.output_file.package,
+            imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.output_type,
-            typing_compiler=self.output_file.typing_compiler,
-            request=self.request,
+            typing_compiler=self.parent.output_file.typing_compiler,
+            request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.output_file.pydantic_dataclasses,
+            pydantic=self.parent.output_file.pydantic_dataclasses,
         )
 
     @property
@@ -709,3 +634,7 @@ class ServiceMethodCompiler(ProtoContentBase):
     @property
     def server_streaming(self) -> bool:
         return self.proto_obj.server_streaming
+
+    @property
+    def deprecated(self) -> bool:
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)

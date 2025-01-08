@@ -131,8 +131,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
                 field.ready()
             message.ready()
         for enum in package.enums.values():
-            for variant in enum.fields:
-                variant.ready()
             enum.ready()
         for service in package.services.values():
             for method in service.methods:
@@ -175,7 +173,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
 
 
 def read_protobuf_type(
-    item: DescriptorProto,
+    item: DescriptorProto | EnumDescriptorProto,
     path: list[int],
     source_file: "FileDescriptorProto",
     output_package: OutputTemplate,
@@ -187,55 +185,62 @@ def read_protobuf_type(
         # Process Message
         message_data = MessageCompiler(
             source_file=source_file,
-            parent=output_package,
+            output_file=output_package,
             proto_obj=item,
             path=path,
-            typing_compiler=output_package.typing_compiler,
         )
+        output_package.messages[message_data.proto_name] = message_data
+
         for index, field in enumerate(item.field):
             if is_map(field, item):
-                MapEntryCompiler(
-                    source_file=source_file,
-                    parent=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    MapEntryCompiler(
+                        source_file=source_file,
+                        message=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
             elif is_oneof(field):
-                OneOfFieldCompiler(
-                    source_file=source_file,
-                    parent=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    OneOfFieldCompiler(
+                        source_file=source_file,
+                        message=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
             else:
-                FieldCompiler(
-                    source_file=source_file,
-                    parent=message_data,
-                    proto_obj=field,
-                    path=path + [2, index],
-                    typing_compiler=output_package.typing_compiler,
+                message_data.fields.append(
+                    FieldCompiler(
+                        source_file=source_file,
+                        message=message_data,
+                        proto_obj=field,
+                        path=path + [2, index],
+                        typing_compiler=output_package.typing_compiler,
+                    )
                 )
 
         for index, oneof in enumerate(item.oneof_decl):
-            OneofCompiler(
-                source_file=source_file,
-                typing_compiler=output_package.typing_compiler,
-                path=path + [8, index],
-                parent=message_data,
-                proto_obj=oneof,
+            message_data.oneofs.append(
+                OneofCompiler(
+                    source_file=source_file,
+                    path=path + [8, index],
+                    proto_obj=oneof,
+                )
             )
 
     elif isinstance(item, EnumDescriptorProto):
         # Enum
-        EnumDefinitionCompiler(
+        enum = EnumDefinitionCompiler(
             source_file=source_file,
-            parent=output_package,
+            output_file=output_package,
             proto_obj=item,
             path=path,
-            typing_compiler=output_package.typing_compiler,
         )
+        output_package.enums[enum.proto_name] = enum
 
 
 def read_protobuf_service(
@@ -246,14 +251,18 @@ def read_protobuf_service(
 ) -> None:
     service_data = ServiceCompiler(
         source_file=source_file,
-        parent=output_package,
+        output_file=output_package,
         proto_obj=service,
         path=[6, index],
     )
+    service_data.output_file.services[service_data.proto_name] = service_data
+
     for j, method in enumerate(service.method):
-        ServiceMethodCompiler(
-            source_file=source_file,
-            parent=service_data,
-            proto_obj=method,
-            path=[6, index, 2, j],
+        service_data.methods.append(
+            ServiceMethodCompiler(
+                source_file=source_file,
+                parent=service_data,
+                proto_obj=method,
+                path=[6, index, 2, j],
+            )
         )
