@@ -141,11 +141,11 @@ def get_comment(
     return ""
 
 
+@dataclass(kw_only=True)
 class ProtoContentBase:
     """Methods common to MessageCompiler, ServiceCompiler and ServiceMethodCompiler."""
 
     source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
     path: list[int]
 
     def ready(self) -> None:
@@ -226,11 +226,8 @@ class OutputTemplate:
 class MessageCompiler(ProtoContentBase):
     """Representation of a protobuf message."""
 
-    source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
     output_file: OutputTemplate
     proto_obj: DescriptorProto
-    path: list[int]
     fields: list["FieldCompiler"] = field(default_factory=list)
     oneofs: list["OneofCompiler"] = field(default_factory=list)
     builtins_types: set[str] = field(default_factory=set)
@@ -295,9 +292,7 @@ def is_oneof(proto_field_obj: FieldDescriptorProto) -> bool:
 
 @dataclass(kw_only=True)
 class FieldCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
     typing_compiler: TypingCompiler
-    path: list[int]
     builtins_types: set[str] = field(default_factory=set)
 
     message: MessageCompiler
@@ -491,10 +486,6 @@ class MapEntryCompiler(FieldCompiler):
 
 @dataclass(kw_only=True)
 class OneofCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
-    typing_compiler: TypingCompiler
-    path: list[int]
-
     proto_obj: OneofDescriptorProto
 
     @property
@@ -506,10 +497,8 @@ class OneofCompiler(ProtoContentBase):
 class EnumDefinitionCompiler(ProtoContentBase):
     """Representation of a proto Enum definition."""
 
-    source_file: FileDescriptorProto
     output_file: OutputTemplate
     proto_obj: EnumDescriptorProto
-    path: list[int]
     entries: list["EnumDefinitionCompiler.EnumEntry"] = field(default_factory=list)
 
     @dataclass(unsafe_hash=True, kw_only=True)
@@ -546,10 +535,8 @@ class EnumDefinitionCompiler(ProtoContentBase):
 
 @dataclass(kw_only=True)
 class ServiceCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
     output_file: OutputTemplate
     proto_obj: ServiceDescriptorProto
-    path: list[int]
     methods: list["ServiceMethodCompiler"] = field(default_factory=list)
 
     @property
@@ -563,10 +550,8 @@ class ServiceCompiler(ProtoContentBase):
 
 @dataclass(kw_only=True)
 class ServiceMethodCompiler(ProtoContentBase):
-    source_file: FileDescriptorProto
     parent: ServiceCompiler
     proto_obj: MethodDescriptorProto
-    path: list[int]
 
     @property
     def py_name(self) -> str:

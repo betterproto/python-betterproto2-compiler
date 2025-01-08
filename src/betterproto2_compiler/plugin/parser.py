@@ -188,7 +188,6 @@ def read_protobuf_type(
             output_file=output_package,
             proto_obj=item,
             path=path,
-            typing_compiler=output_package.typing_compiler,
         )
         output_package.messages[message_data.proto_name] = message_data
 
@@ -228,7 +227,6 @@ def read_protobuf_type(
             message_data.oneofs.append(
                 OneofCompiler(
                     source_file=source_file,
-                    typing_compiler=output_package.typing_compiler,
                     path=path + [8, index],
                     proto_obj=oneof,
                 )
