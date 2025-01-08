@@ -148,8 +148,6 @@ class ProtoContentBase:
     typing_compiler: TypingCompiler
     path: list[int]
 
-    __dataclass_fields__: dict[str, object]
-
     def ready(self) -> None:
         """
         This function is called after all the compilers are created, but before generating the output code.
@@ -505,10 +503,13 @@ class OneofCompiler(ProtoContentBase):
 
 
 @dataclass(kw_only=True)
-class EnumDefinitionCompiler(MessageCompiler):
+class EnumDefinitionCompiler(ProtoContentBase):
     """Representation of a proto Enum definition."""
 
+    source_file: FileDescriptorProto
+    output_file: OutputTemplate
     proto_obj: EnumDescriptorProto
+    path: list[int]
     entries: list["EnumDefinitionCompiler.EnumEntry"] = field(default_factory=list)
 
     @dataclass(unsafe_hash=True, kw_only=True)
@@ -529,6 +530,18 @@ class EnumDefinitionCompiler(MessageCompiler):
             )
             for entry_number, entry_proto_value in enumerate(self.proto_obj.value)
         ]
+
+    @property
+    def proto_name(self) -> str:
+        return self.proto_obj.name
+
+    @property
+    def py_name(self) -> str:
+        return pythonize_class_name(self.proto_name)
+
+    @property
+    def deprecated(self) -> bool:
+        return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
 
 
 @dataclass(kw_only=True)

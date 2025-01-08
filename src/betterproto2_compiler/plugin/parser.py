@@ -131,8 +131,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
                 field.ready()
             message.ready()
         for enum in package.enums.values():
-            for variant in enum.fields:
-                variant.ready()
             enum.ready()
         for service in package.services.values():
             for method in service.methods:
@@ -243,7 +241,6 @@ def read_protobuf_type(
             output_file=output_package,
             proto_obj=item,
             path=path,
-            typing_compiler=output_package.typing_compiler,
         )
         output_package.enums[enum.proto_name] = enum
 
