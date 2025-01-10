@@ -16,7 +16,7 @@ class {{ enum.py_name }}(betterproto2.Enum):
 
     {% endfor %}
 
-    {% if output_file.pydantic_dataclasses %}
+    {% if output_file.settings.pydantic_dataclasses %}
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type, _handler):
         from pydantic_core import core_schema
@@ -26,7 +26,7 @@ class {{ enum.py_name }}(betterproto2.Enum):
 
 {% endfor %}
 {% for _, message in output_file.messages|dictsort(by="key") %}
-{% if output_file.pydantic_dataclasses %}
+{% if output_file.settings.pydantic_dataclasses %}
 @dataclass(eq=False, repr=False, config={"extra": "forbid"})
 {% else %}
 @dataclass(eq=False, repr=False)
@@ -70,7 +70,7 @@ class {{ message.py_name }}(betterproto2.Message):
         {% endfor %}
     {%  endif %}
 
-    {% if output_file.pydantic_dataclasses and message.has_oneof_fields %}
+    {% if output_file.settings.pydantic_dataclasses and message.has_oneof_fields %}
     @model_validator(mode='after')
     def check_oneof(cls, values):
         return cls._validate_field_groups(values)
@@ -92,20 +92,20 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
         {%- if not method.client_streaming -%}
             , {{ method.py_input_message_param }}:
                 {%- if method.is_input_msg_empty -%}
-                    "{{ method.py_input_message_type }} | None" = None
+                    "{{ output_file.settings.typing_compiler.optional(method.py_input_message_type) }}" = None
                 {%- else -%}
                     "{{ method.py_input_message_type }}"
                 {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , {{ method.py_input_message_param }}_iterator: "{{ output_file.typing_compiler.union(output_file.typing_compiler.async_iterable(method.py_input_message_type), output_file.typing_compiler.iterable(method.py_input_message_type)) }}"
+            , {{ method.py_input_message_param }}_iterator: "{{ output_file.settings.typing_compiler.union(output_file.settings.typing_compiler.async_iterable(method.py_input_message_type), output_file.settings.typing_compiler.iterable(method.py_input_message_type)) }}"
         {%- endif -%}
             ,
             *
-            , timeout: {{ output_file.typing_compiler.optional("float") }} = None
-            , deadline: "{{ output_file.typing_compiler.optional("Deadline") }}" = None
-            , metadata: "{{ output_file.typing_compiler.optional("MetadataLike") }}" = None
-            ) -> "{% if method.server_streaming %}{{ output_file.typing_compiler.async_iterator(method.py_output_message_type ) }}{% else %}{{ method.py_output_message_type }}{% endif %}":
+            , timeout: {{ output_file.settings.typing_compiler.optional("float") }} = None
+            , deadline: "{{ output_file.settings.typing_compiler.optional("Deadline") }}" = None
+            , metadata: "{{ output_file.settings.typing_compiler.optional("MetadataLike") }}" = None
+            ) -> "{% if method.server_streaming %}{{ output_file.settings.typing_compiler.async_iterator(method.py_output_message_type ) }}{% else %}{{ method.py_output_message_type }}{% endif %}":
         {% if method.comment %}
         """
         {{ method.comment | indent(8) }}
@@ -194,9 +194,9 @@ class {{ service.py_name }}Base(ServiceBase):
             , {{ method.py_input_message_param }}: "{{ method.py_input_message_type }}"
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , {{ method.py_input_message_param }}_iterator: {{ output_file.typing_compiler.async_iterator(method.py_input_message_type) }}
+            , {{ method.py_input_message_param }}_iterator: {{ output_file.settings.typing_compiler.async_iterator(method.py_input_message_type) }}
         {%- endif -%}
-            ) -> {% if method.server_streaming %}{{ output_file.typing_compiler.async_iterator(method.py_output_message_type) }}{% else %}"{{ method.py_output_message_type }}"{% endif %}:
+            ) -> {% if method.server_streaming %}{{ output_file.settings.typing_compiler.async_iterator(method.py_output_message_type) }}{% else %}"{{ method.py_output_message_type }}"{% endif %}:
         {% if method.comment %}
         """
         {{ method.comment | indent(8) }}
@@ -227,7 +227,7 @@ class {{ service.py_name }}Base(ServiceBase):
 
     {% endfor %}
 
-    def __mapping__(self) -> {{ output_file.typing_compiler.dict("str", "grpclib.const.Handler") }}:
+    def __mapping__(self) -> {{ output_file.settings.typing_compiler.dict("str", "grpclib.const.Handler") }}:
         return {
         {% for method in service.methods %}
         "{{ method.route }}": grpclib.const.Handler(
