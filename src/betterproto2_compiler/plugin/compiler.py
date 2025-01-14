@@ -42,7 +42,7 @@ def outputfile_compiler(output_file: OutputTemplate) -> str:
 
     # Sort imports, delete unused ones
     code = subprocess.check_output(
-        ["ruff", "check", "--select", "I,F401", "--fix", "--silent", "-"],
+        ["ruff", "check", "--select", "I,F401,TCH005", "--fix", "--silent", "-"],
         input=code,
         encoding="utf-8",
     )
