@@ -7,12 +7,13 @@ from typing import (
 
 from betterproto2.lib.google import protobuf as google_protobuf
 
+from betterproto2_compiler.settings import Settings
+
 from ..casing import safe_snake_case
 from .naming import pythonize_class_name
 
 if TYPE_CHECKING:
     from ..plugin.models import PluginRequestCompiler
-    from ..plugin.typing_compiler import TypingCompiler
 
 WRAPPER_TYPES: dict[str, type] = {
     ".google.protobuf.DoubleValue": google_protobuf.DoubleValue,
@@ -72,10 +73,9 @@ def get_type_reference(
     package: str,
     imports: set,
     source_type: str,
-    typing_compiler: TypingCompiler,
     request: PluginRequestCompiler,
     unwrap: bool = True,
-    pydantic: bool = False,
+    settings: Settings,
 ) -> str:
     """
     Return a Python type name for a proto type reference. Adds the import if
@@ -84,7 +84,7 @@ def get_type_reference(
     if unwrap:
         if source_type in WRAPPER_TYPES:
             wrapped_type = type(WRAPPER_TYPES[source_type]().value)
-            return typing_compiler.optional(wrapped_type.__name__)
+            return settings.typing_compiler.optional(wrapped_type.__name__)
 
         if source_type == ".google.protobuf.Duration":
             return "datetime.timedelta"
@@ -101,7 +101,7 @@ def get_type_reference(
     compiling_google_protobuf = current_package == ["google", "protobuf"]
     importing_google_protobuf = py_package == ["google", "protobuf"]
     if importing_google_protobuf and not compiling_google_protobuf:
-        py_package = ["betterproto2", "lib"] + (["pydantic"] if pydantic else []) + py_package
+        py_package = ["betterproto2", "lib"] + (["pydantic"] if settings.pydantic_dataclasses else []) + py_package
 
     if py_package[:1] == ["betterproto2"]:
         return reference_absolute(imports, py_package, py_type)

@@ -22,16 +22,16 @@ import builtins
 import datetime
 import warnings
 
-{% if output_file.pydantic_dataclasses %}
+{% if output_file.settings.pydantic_dataclasses %}
 from pydantic.dataclasses import dataclass
 from pydantic import model_validator
 {%- else -%}
 from dataclasses import dataclass
 {% endif %}
 
-{% set typing_imports = output_file.typing_compiler.imports() %}
+{% set typing_imports = output_file.settings.typing_compiler.imports() %}
 {% if typing_imports %}
-{% for line in output_file.typing_compiler.import_lines() %}
+{% for line in output_file.settings.typing_compiler.import_lines() %}
 {{ line }}
 {% endfor %}
 {% endif %}

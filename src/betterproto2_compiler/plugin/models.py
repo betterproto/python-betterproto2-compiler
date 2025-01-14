@@ -53,6 +53,7 @@ from betterproto2_compiler.compile.naming import (
     pythonize_method_name,
 )
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
+from betterproto2_compiler.settings import Settings
 
 from ..compile.importing import get_type_reference, parse_source_type_name
 from ..compile.naming import (
@@ -61,10 +62,7 @@ from ..compile.naming import (
     pythonize_field_name,
     pythonize_method_name,
 )
-from .typing_compiler import (
-    DirectImportTypingCompiler,
-    TypingCompiler,
-)
+from .typing_compiler import TypingCompiler
 
 # Organize proto types into categories
 PROTO_FLOAT_TYPES = (
@@ -195,9 +193,9 @@ class OutputTemplate:
     messages: dict[str, "MessageCompiler"] = field(default_factory=dict)
     enums: dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
     services: dict[str, "ServiceCompiler"] = field(default_factory=dict)
-    pydantic_dataclasses: bool = False
     output: bool = True
-    typing_compiler: TypingCompiler = field(default_factory=DirectImportTypingCompiler)
+
+    settings: Settings
 
     @property
     def package(self) -> str:
@@ -395,9 +393,8 @@ class FieldCompiler(ProtoContentBase):
                 package=self.output_file.package,
                 imports=self.output_file.imports_end,
                 source_type=self.proto_obj.type_name,
-                typing_compiler=self.typing_compiler,
                 request=self.output_file.parent_request,
-                pydantic=self.output_file.pydantic_dataclasses,
+                settings=self.output_file.settings,
             )
         else:
             raise NotImplementedError(f"Unknown type {self.proto_obj.type}")
@@ -582,10 +579,9 @@ class ServiceMethodCompiler(ProtoContentBase):
             package=self.parent.output_file.package,
             imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.input_type,
-            typing_compiler=self.parent.output_file.typing_compiler,
             request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.parent.output_file.pydantic_dataclasses,
+            settings=self.parent.output_file.settings,
         )
 
     @property
@@ -621,10 +617,9 @@ class ServiceMethodCompiler(ProtoContentBase):
             package=self.parent.output_file.package,
             imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.output_type,
-            typing_compiler=self.parent.output_file.typing_compiler,
             request=self.parent.output_file.parent_request,
             unwrap=False,
-            pydantic=self.parent.output_file.pydantic_dataclasses,
+            settings=self.parent.output_file.settings,
         )
 
     @property

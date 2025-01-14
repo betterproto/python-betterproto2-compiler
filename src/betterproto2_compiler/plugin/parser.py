@@ -15,6 +15,7 @@ from betterproto2_compiler.lib.google.protobuf.compiler import (
     CodeGeneratorResponseFeature,
     CodeGeneratorResponseFile,
 )
+from betterproto2_compiler.settings import Settings
 
 from .compiler import outputfile_compiler
 from .models import (
@@ -64,11 +65,35 @@ def traverse(
     yield from _traverse([4], proto_file.message_type)
 
 
+def get_settings(plugin_options: list[str]) -> Settings:
+    # Gather any typing generation options.
+    typing_opts = [opt[len("typing.") :] for opt in plugin_options if opt.startswith("typing.")]
+
+    if len(typing_opts) > 1:
+        raise ValueError("Multiple typing options provided")
+
+    # Set the compiler type.
+    typing_opt = typing_opts[0] if typing_opts else "direct"
+    if typing_opt == "direct":
+        typing_compiler = DirectImportTypingCompiler()
+    elif typing_opt == "root":
+        typing_compiler = TypingImportTypingCompiler()
+    elif typing_opt == "310":
+        typing_compiler = NoTyping310TypingCompiler()
+    else:
+        raise ValueError("Invalid typing option provided")
+
+    return Settings(
+        typing_compiler=typing_compiler,
+        pydantic_dataclasses="pydantic_dataclasses" in plugin_options,
+    )
+
+
 def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
-    response = CodeGeneratorResponse()
+    response = CodeGeneratorResponse(supported_features=CodeGeneratorResponseFeature.FEATURE_PROTO3_OPTIONAL)
 
     plugin_options = request.parameter.split(",") if request.parameter else []
-    response.supported_features = CodeGeneratorResponseFeature.FEATURE_PROTO3_OPTIONAL
+    settings = get_settings(plugin_options)
 
     request_data = PluginRequestCompiler(plugin_request_obj=request)
     # Gather output packages
@@ -77,8 +102,7 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
         if output_package_name not in request_data.output_packages:
             # Create a new output if there is no output for this package
             request_data.output_packages[output_package_name] = OutputTemplate(
-                parent_request=request_data,
-                package_proto_obj=proto_file,
+                parent_request=request_data, package_proto_obj=proto_file, settings=settings
             )
         # Add this input file to the output corresponding to this package
         request_data.output_packages[output_package_name].input_files.append(proto_file)
@@ -87,23 +111,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
             # If not INCLUDE_GOOGLE,
             # skip outputting Google's well-known types
             request_data.output_packages[output_package_name].output = False
-
-        if "pydantic_dataclasses" in plugin_options:
-            request_data.output_packages[output_package_name].pydantic_dataclasses = True
-
-        # Gather any typing generation options.
-        typing_opts = [opt[len("typing.") :] for opt in plugin_options if opt.startswith("typing.")]
-
-        if len(typing_opts) > 1:
-            raise ValueError("Multiple typing options provided")
-        # Set the compiler type.
-        typing_opt = typing_opts[0] if typing_opts else "direct"
-        if typing_opt == "direct":
-            request_data.output_packages[output_package_name].typing_compiler = DirectImportTypingCompiler()
-        elif typing_opt == "root":
-            request_data.output_packages[output_package_name].typing_compiler = TypingImportTypingCompiler()
-        elif typing_opt == "310":
-            request_data.output_packages[output_package_name].typing_compiler = NoTyping310TypingCompiler()
 
     # Read Messages and Enums
     # We need to read Messages before Services in so that we can
@@ -199,7 +206,7 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.typing_compiler,
+                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
             elif is_oneof(field):
@@ -209,7 +216,7 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.typing_compiler,
+                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
             else:
@@ -219,7 +226,7 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.typing_compiler,
+                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
 
