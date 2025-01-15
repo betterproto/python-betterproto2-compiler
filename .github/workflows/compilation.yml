@@ -1,13 +1,9 @@
-name: Test files compilation
+name: Compile test files
 
 on:
   push:
     branches:
       - main
-  pull_request:  # TODEL
-    branches:
-      - '**'
-
 
 permissions:
   contents: write
