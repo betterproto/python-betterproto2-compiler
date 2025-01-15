@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  pull_request:  # TODEL
+    branches:
+      - '**'
+
 
 permissions:
   contents: write
@@ -54,6 +58,10 @@ jobs:
         shell: bash
         run: poetry run poe generate
 
+      - name: Compile the lib
+        shell: bash
+        run: poetry run poe generate_lib
+
       - name: Publish the compiled files
         shell: bash
         run: |
@@ -62,6 +70,7 @@ jobs:
           cp -r tests/output_betterproto tests_betterproto
           cp -r tests/output_betterproto_pydantic tests_betterproto_pydantic
           cp -r tests/output_reference tests_reference
-          git add tests_betterproto tests_betterproto_pydantic tests_reference
+          cp -r tests/output_lib lib
+          git add tests_betterproto tests_betterproto_pydantic tests_reference lib
           git commit -m "Add compilation output"
           git push --force origin compiled-test-files
