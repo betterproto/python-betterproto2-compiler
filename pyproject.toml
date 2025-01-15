@@ -105,7 +105,7 @@ help = "Serve the documentation locally"
 [tool.poe.tasks.generate_lib]
 shell = """
 mkdir -p tests/output_lib
-protoc \
+python -m grpc.tools.protoc \
     --python_betterproto2_opt=INCLUDE_GOOGLE \
     --python_betterproto2_out=tests/output_lib \
     google/protobuf/any.proto \
