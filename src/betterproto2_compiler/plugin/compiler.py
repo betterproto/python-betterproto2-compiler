@@ -40,15 +40,23 @@ def outputfile_compiler(output_file: OutputTemplate) -> str:
     code = body_template.render(output_file=output_file)
     code = header_template.render(output_file=output_file, version=version) + "\n" + code
 
-    # Sort imports, delete unused ones
-    code = subprocess.check_output(
-        ["ruff", "check", "--select", "I,F401,TCH005", "--fix", "--silent", "-"],
-        input=code,
-        encoding="utf-8",
-    )
+    try:
+        # Sort imports, delete unused ones
+        code = subprocess.check_output(
+            ["ruff", "check", "--select", "I,F401,TCH005", "--fix", "--silent", "-"],
+            input=code,
+            encoding="utf-8",
+        )
 
-    # Format the code
-    code = subprocess.check_output(["ruff", "format", "-"], input=code, encoding="utf-8")
+        # Format the code
+        code = subprocess.check_output(["ruff", "format", "-"], input=code, encoding="utf-8")
+    except subprocess.CalledProcessError:
+        with open("invalid-generated-code.py", "w") as f:
+            f.write(code)
+
+        raise SyntaxError(
+            f"Can't format the source code:\nThe invalid generated code has been written in `invalid-generated-code.py`"
+        )
 
     # Validate the generated code.
     validator = ModuleValidator(iter(code.splitlines()))
