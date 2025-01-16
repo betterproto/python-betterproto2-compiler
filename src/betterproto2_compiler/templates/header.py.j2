@@ -44,6 +44,13 @@ import grpclib
 
 from typing import TYPE_CHECKING
 
+{# Import the message pool of the generated code. #}
+{% if output_file.package %}
+from {{ "." * output_file.package.count(".") }}..message_pool import default_message_pool
+{% else %}
+from .message_pool import default_message_pool
+{% endif %}
+
 if TYPE_CHECKING:
     import grpclib.server
     from betterproto2.grpc.grpclib_client import MetadataLike

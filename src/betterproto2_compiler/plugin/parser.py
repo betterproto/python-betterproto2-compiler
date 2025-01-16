@@ -173,6 +173,12 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
     for init_file in init_files:
         response.file.append(CodeGeneratorResponseFile(name=str(init_file)))
 
+    response.file.append(
+        CodeGeneratorResponseFile(
+            name="message_pool.py", content="import betterproto2\n\ndefault_message_pool = betterproto2.MessagePool()\n"
+        )
+    )
+
     for output_package_name in sorted(output_paths.union(init_files)):
         print(f"Writing {output_package_name}", file=sys.stderr)
 
