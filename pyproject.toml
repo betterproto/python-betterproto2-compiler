@@ -68,8 +68,41 @@ cmd = "pytest"
 help = "Run tests"
 
 [tool.poe.tasks.generate]
-script = "tests.generate:main"
+sequence = ["_generate_tests", "_generate_tests_lib"]
 help = "Generate test cases"
+
+[tool.poe.tasks._generate_tests]
+script = "tests.generate:main"
+
+[tool.poe.tasks._generate_tests_lib]
+shell = """
+python -m grpc.tools.protoc \
+    --python_betterproto2_out=tests/output_betterproto \
+    google/protobuf/any.proto \
+    google/protobuf/api.proto \
+    google/protobuf/duration.proto \
+    google/protobuf/empty.proto \
+    google/protobuf/field_mask.proto \
+    google/protobuf/source_context.proto \
+    google/protobuf/struct.proto \
+    google/protobuf/timestamp.proto \
+    google/protobuf/type.proto \
+    google/protobuf/wrappers.proto
+
+python -m grpc.tools.protoc \
+    --python_betterproto2_out=tests/output_betterproto_pydantic \
+    --python_betterproto2_opt=pydantic_dataclasses \
+    google/protobuf/any.proto \
+    google/protobuf/api.proto \
+    google/protobuf/duration.proto \
+    google/protobuf/empty.proto \
+    google/protobuf/field_mask.proto \
+    google/protobuf/source_context.proto \
+    google/protobuf/struct.proto \
+    google/protobuf/timestamp.proto \
+    google/protobuf/type.proto \
+    google/protobuf/wrappers.proto
+"""
 
 [tool.poe.tasks.typecheck]
 cmd  = "pyright src"
@@ -102,25 +135,6 @@ help = "Check the code with the Ruff linter"
 [tool.poe.tasks.serve-docs]
 cmd = "mkdocs serve"
 help = "Serve the documentation locally"
-
-[tool.poe.tasks.generate_lib]
-shell = """
-mkdir -p tests/output_lib
-python -m grpc.tools.protoc \
-    --python_betterproto2_opt=INCLUDE_GOOGLE \
-    --python_betterproto2_out=tests/output_lib \
-    google/protobuf/any.proto \
-    google/protobuf/api.proto \
-    google/protobuf/duration.proto \
-    google/protobuf/empty.proto \
-    google/protobuf/field_mask.proto \
-    google/protobuf/source_context.proto \
-    google/protobuf/struct.proto \
-    google/protobuf/timestamp.proto \
-    google/protobuf/type.proto \
-    google/protobuf/wrappers.proto
-"""
-help = "Compile the well-known proto types"
 
 [build-system]
 requires = ["poetry-core>=1.0.0,<2"]

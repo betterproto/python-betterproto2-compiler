@@ -62,4 +62,4 @@ jobs:
 
       - name: Generate code from proto files
         shell: bash
-        run: poetry run python -m tests.generate -v
+        run: poetry run poe generate
