@@ -35,8 +35,8 @@ class {{ message.py_name }}(betterproto2.Message):
     {% if message.comment or message.oneofs %}
     """
     {{ message.comment | indent(4) }}
-
     {% if message.oneofs %}
+
     Oneofs:
         {% for oneof in message.oneofs %}
         - {{ oneof.name }}: {{ oneof.comment | indent(12) }}
@@ -52,6 +52,7 @@ class {{ message.py_name }}(betterproto2.Message):
     {{ field.comment | indent(4) }}
     """
     {% endif %}
+
     {% endfor %}
 
     {% if not message.fields %}
@@ -74,7 +75,14 @@ class {{ message.py_name }}(betterproto2.Message):
     @model_validator(mode='after')
     def check_oneof(cls, values):
         return cls._validate_field_groups(values)
+
     {%  endif %}
+    {% for method_source in message.custom_methods %}
+    {{ method_source }}
+    {% endfor %}
+
+betterproto2.default_message_pool.register_message("{{ output_file.package }}", "{{ message.proto_name }}", {{ message.py_name }})
+
 
 {% endfor %}
 {% for _, service in output_file.services|dictsort(by="key") %}

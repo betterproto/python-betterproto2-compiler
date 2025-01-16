@@ -25,6 +25,7 @@ such as a pythonized name, that will be calculated from proto_obj.
 """
 
 import builtins
+import inspect
 import re
 from collections.abc import Iterator
 from dataclasses import (
@@ -47,22 +48,17 @@ from betterproto2.lib.google.protobuf import (
     ServiceDescriptorProto,
 )
 
+from betterproto2_compiler.compile.importing import get_type_reference, parse_source_type_name
 from betterproto2_compiler.compile.naming import (
-    pythonize_class_name,
-    pythonize_field_name,
-    pythonize_method_name,
-)
-from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
-from betterproto2_compiler.settings import Settings
-
-from ..compile.importing import get_type_reference, parse_source_type_name
-from ..compile.naming import (
     pythonize_class_name,
     pythonize_enum_member_name,
     pythonize_field_name,
     pythonize_method_name,
 )
-from .typing_compiler import TypingCompiler
+from betterproto2_compiler.known_types import KNOWN_METHODS
+from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
+from betterproto2_compiler.plugin.typing_compiler import TypingCompiler
+from betterproto2_compiler.settings import Settings
 
 # Organize proto types into categories
 PROTO_FLOAT_TYPES = (
@@ -263,6 +259,19 @@ class MessageCompiler(ProtoContentBase):
             for field in self.fields
             if isinstance(field.proto_obj, FieldDescriptorProto)
         )
+
+    @property
+    def custom_methods(self) -> list[str]:
+        """
+        Return a list of the custom methods.
+        """
+        methods_source: list[str] = []
+
+        for method in KNOWN_METHODS.get((self.source_file.package, self.py_name), []):
+            source = inspect.getsource(method)
+            methods_source.append(source.strip())
+
+        return methods_source
 
 
 def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProto) -> bool:
