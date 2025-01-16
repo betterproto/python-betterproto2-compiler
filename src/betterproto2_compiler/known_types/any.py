@@ -28,5 +28,6 @@ class Any(VanillaAny):
 
         return message_type().parse(self.value)
 
-    def to_dict(self) -> dict:  # TOOO improve when dict is updated
+    def to_dict(self) -> dict:  # pyright: ignore [reportIncompatibleMethodOverride]
+        # TOOO improve when dict is updated
         return {"@type": self.type_url, "value": self.unpack().to_dict()}
