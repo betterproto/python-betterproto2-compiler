@@ -81,7 +81,7 @@ class {{ message.py_name }}(betterproto2.Message):
     {{ method_source }}
     {% endfor %}
 
-betterproto2.default_message_pool.register_message("{{ output_file.package }}", "{{ message.proto_name }}", {{ message.py_name }})
+default_message_pool.register_message("{{ output_file.package }}", "{{ message.proto_name }}", {{ message.py_name }})
 
 
 {% endfor %}

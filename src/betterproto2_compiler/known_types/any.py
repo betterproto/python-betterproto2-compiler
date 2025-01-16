@@ -1,6 +1,8 @@
 import betterproto2
 from betterproto2.lib.std.google.protobuf import Any as VanillaAny
 
+default_message_pool = betterproto2.MessagePool()  # Only for typing purpose
+
 
 class Any(VanillaAny):
     def pack(self, message: betterproto2.Message, message_pool: "betterproto2.MessagePool | None" = None) -> None:
@@ -10,7 +12,7 @@ class Any(VanillaAny):
         The message type must be registered in the message pool, which is done automatically when the module defining
         the message type is imported.
         """
-        message_pool = message_pool or betterproto2.default_message_pool
+        message_pool = message_pool or default_message_pool
 
         self.type_url = message_pool.type_to_url[type(message)]
         self.value = bytes(message)
@@ -22,7 +24,7 @@ class Any(VanillaAny):
         The target message type must be registered in the message pool, which is done automatically when the module
         defining the message type is imported.
         """
-        message_pool = message_pool or betterproto2.default_message_pool
+        message_pool = message_pool or default_message_pool
 
         message_type = message_pool.url_to_type[self.type_url]
 
