@@ -98,14 +98,6 @@ def get_type_reference(
     py_package: list[str] = source_package.split(".") if source_package else []
     py_type: str = pythonize_class_name(source_type)
 
-    compiling_google_protobuf = current_package == ["google", "protobuf"]
-    importing_google_protobuf = py_package == ["google", "protobuf"]
-    if importing_google_protobuf and not compiling_google_protobuf:
-        py_package = ["betterproto2", "lib"] + (["pydantic"] if settings.pydantic_dataclasses else []) + py_package
-
-    if py_package[:1] == ["betterproto2"]:
-        return reference_absolute(imports, py_package, py_type)
-
     if py_package == current_package:
         return reference_sibling(py_type)
 
