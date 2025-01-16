@@ -5,8 +5,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from betterproto2.lib.google import protobuf as google_protobuf
-
+from betterproto2_compiler.lib.google import protobuf as google_protobuf
 from betterproto2_compiler.settings import Settings
 
 from ..casing import safe_snake_case

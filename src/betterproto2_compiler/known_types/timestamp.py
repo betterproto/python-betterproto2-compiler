@@ -1,6 +1,6 @@
 import datetime
 
-from betterproto2.lib.std.google.protobuf import Timestamp as VanillaTimestamp
+from betterproto2_compiler.lib.google.protobuf import Timestamp as VanillaTimestamp
 
 
 class Timestamp(VanillaTimestamp):
