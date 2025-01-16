@@ -2,9 +2,7 @@ import betterproto2
 
 from betterproto2_compiler.lib.google.protobuf import Any as VanillaAny
 
-# TODO put back
-# default_message_pool = betterproto2.MessagePool()  # Only for typing purpose
-default_message_pool = ...
+default_message_pool = betterproto2.MessagePool()  # Only for typing purpose
 
 
 class Any(VanillaAny):
