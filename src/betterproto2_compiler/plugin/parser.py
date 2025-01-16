@@ -227,14 +227,21 @@ def read_protobuf_type(
                     )
                 )
 
-        for index, oneof in enumerate(item.oneof_decl):
-            message_data.oneofs.append(
-                OneofCompiler(
-                    source_file=source_file,
-                    path=path + [8, index],
-                    proto_obj=oneof,
+        # Synthetic oneofs are generated for optional fields. We should not generate code or documentation for them.
+        is_synthetic_oneof = [True for _ in item.oneof_decl]
+        for field in item.field:
+            if field.oneof_index is not None and not field.proto3_optional:
+                is_synthetic_oneof[field.oneof_index] = False
+
+        for index, (oneof, is_synthetic) in enumerate(zip(item.oneof_decl, is_synthetic_oneof)):
+            if not is_synthetic:
+                message_data.oneofs.append(
+                    OneofCompiler(
+                        source_file=source_file,
+                        path=path + [8, index],
+                        proto_obj=oneof,
+                    )
                 )
-            )
 
     elif isinstance(item, EnumDescriptorProto):
         # Enum
