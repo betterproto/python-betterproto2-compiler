@@ -1,6 +1,6 @@
 import datetime
 
-from betterproto2.lib.std.google.protobuf import Duration as VanillaDuration
+from betterproto2_compiler.lib.google.protobuf import Duration as VanillaDuration
 
 
 class Duration(VanillaDuration):

@@ -35,7 +35,16 @@ from dataclasses import (
 
 import betterproto2
 from betterproto2 import unwrap
-from betterproto2.lib.google.protobuf import (
+
+from betterproto2_compiler.compile.importing import get_type_reference, parse_source_type_name
+from betterproto2_compiler.compile.naming import (
+    pythonize_class_name,
+    pythonize_enum_member_name,
+    pythonize_field_name,
+    pythonize_method_name,
+)
+from betterproto2_compiler.known_types import KNOWN_METHODS
+from betterproto2_compiler.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
     FieldDescriptorProto,
@@ -47,15 +56,6 @@ from betterproto2.lib.google.protobuf import (
     OneofDescriptorProto,
     ServiceDescriptorProto,
 )
-
-from betterproto2_compiler.compile.importing import get_type_reference, parse_source_type_name
-from betterproto2_compiler.compile.naming import (
-    pythonize_class_name,
-    pythonize_enum_member_name,
-    pythonize_field_name,
-    pythonize_method_name,
-)
-from betterproto2_compiler.known_types import KNOWN_METHODS
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
 from betterproto2_compiler.plugin.typing_compiler import TypingCompiler
 from betterproto2_compiler.settings import Settings

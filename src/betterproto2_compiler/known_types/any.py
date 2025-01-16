@@ -1,9 +1,8 @@
 import betterproto2
-from betterproto2.lib.std.google.protobuf import Any as VanillaAny
 
-# TODO put back
-# default_message_pool = betterproto2.MessagePool()  # Only for typing purpose
-default_message_pool = ...
+from betterproto2_compiler.lib.google.protobuf import Any as VanillaAny
+
+default_message_pool = betterproto2.MessagePool()  # Only for typing purpose
 
 
 class Any(VanillaAny):

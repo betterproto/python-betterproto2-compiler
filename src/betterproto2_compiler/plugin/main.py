@@ -6,8 +6,6 @@ import sys
 from betterproto2_compiler.lib.google.protobuf.compiler import (
     CodeGeneratorRequest,
 )
-
-# from betterproto.plugin.models import monkey_patch_oneof_index
 from betterproto2_compiler.plugin.parser import generate_code
 
 
@@ -15,9 +13,6 @@ def main() -> None:
     """The plugin's main entry point."""
     # Read request message from stdin
     data = sys.stdin.buffer.read()
-
-    # Apply Work around for proto2/3 difference in protoc messages
-    # monkey_patch_oneof_index()
 
     # Parse request
     request = CodeGeneratorRequest()

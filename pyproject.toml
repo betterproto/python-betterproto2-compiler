@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "betterproto2_compiler"
-version = "0.1.1"
+version = "0.2.0"
 description = "Compiler for betterproto2"
 authors = ["Adrien Vannson <adrien.vannson@protonmail.com>", "Daniel G. Taylor <danielgtaylor@gmail.com>"]
 readme = "README.md"
@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-betterproto2 = "^0.1.3"
+betterproto2 = "^0.2.1"
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
 ruff = "~0.7.4"
 grpclib = "^0.4.1"
@@ -139,3 +139,17 @@ help = "Serve the documentation locally"
 [build-system]
 requires = ["poetry-core>=1.0.0,<2"]
 build-backend = "poetry.core.masonry.api"
+
+# python -m grpc.tools.protoc \
+#     --python_betterproto2_out=src/lib2 \
+#     google/protobuf/any.proto \
+#     google/protobuf/api.proto \
+#     google/protobuf/duration.proto \
+#     google/protobuf/empty.proto \
+#     google/protobuf/field_mask.proto \
+#     google/protobuf/source_context.proto \
+#     google/protobuf/struct.proto \
+#     google/protobuf/timestamp.proto \
+#     google/protobuf/type.proto \
+#     google/protobuf/wrappers.proto \
+#     google/protobuf/compiler/plugin.proto
