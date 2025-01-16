@@ -22,7 +22,7 @@ import betterproto2
 
 from ....message_pool import default_message_pool
 
-betterproto2.check_compiler_version("0.1.1")
+betterproto2.check_compiler_version("0.2.0")
 
 
 class CodeGeneratorResponseFeature(betterproto2.Enum):
