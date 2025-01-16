@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "betterproto2_compiler"
-version = "0.2.0"
+version = "0.2.1"
 description = "Compiler for betterproto2"
 authors = ["Adrien Vannson <adrien.vannson@protonmail.com>", "Daniel G. Taylor <danielgtaylor@gmail.com>"]
 readme = "README.md"
