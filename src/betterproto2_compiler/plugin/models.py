@@ -189,7 +189,6 @@ class OutputTemplate:
     messages: dict[str, "MessageCompiler"] = field(default_factory=dict)
     enums: dict[str, "EnumDefinitionCompiler"] = field(default_factory=dict)
     services: dict[str, "ServiceCompiler"] = field(default_factory=dict)
-    output: bool = True
 
     settings: Settings
 

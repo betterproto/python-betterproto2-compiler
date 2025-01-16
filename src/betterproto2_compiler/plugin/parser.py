@@ -107,11 +107,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
         # Add this input file to the output corresponding to this package
         request_data.output_packages[output_package_name].input_files.append(proto_file)
 
-        if proto_file.package == "google.protobuf" and "INCLUDE_GOOGLE" not in plugin_options:
-            # If not INCLUDE_GOOGLE,
-            # skip outputting Google's well-known types
-            request_data.output_packages[output_package_name].output = False
-
     # Read Messages and Enums
     # We need to read Messages before Services in so that we can
     # get the references to input/output messages for each service
@@ -147,9 +142,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
     # Generate output files
     output_paths: set[pathlib.Path] = set()
     for output_package_name, output_package in request_data.output_packages.items():
-        if not output_package.output:
-            continue
-
         # Add files to the response object
         output_path = pathlib.Path(*output_package_name.split("."), "__init__.py")
         output_paths.add(output_path)
