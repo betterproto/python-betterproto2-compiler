@@ -98,7 +98,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
     {% for method in service.methods %}
     async def {{ method.py_name }}(self
         {%- if not method.client_streaming -%}
-            , {{ method.py_input_message_param }}:
+            , message:
                 {%- if method.is_input_msg_empty -%}
                     "{{ output_file.settings.typing_compiler.optional(method.py_input_message_type) }}" = None
                 {%- else -%}
@@ -106,7 +106,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
                 {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , {{ method.py_input_message_param }}_iterator: "{{ output_file.settings.typing_compiler.union(output_file.settings.typing_compiler.async_iterable(method.py_input_message_type), output_file.settings.typing_compiler.iterable(method.py_input_message_type)) }}"
+            , messages: "{{ output_file.settings.typing_compiler.union(output_file.settings.typing_compiler.async_iterable(method.py_input_message_type), output_file.settings.typing_compiler.iterable(method.py_input_message_type)) }}"
         {%- endif -%}
             ,
             *
@@ -128,7 +128,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
             {% if method.client_streaming %}
         async for response in self._stream_stream(
             "{{ method.route }}",
-            {{ method.py_input_message_param }}_iterator,
+            messages,
             {{ method.py_input_message_type }},
             {{ method.py_output_message_type }},
             timeout=timeout,
@@ -138,13 +138,13 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
             yield response
             {% else %}{# i.e. not client streaming #}
         {% if method.is_input_msg_empty %}
-        if {{ method.py_input_message_param }} is None:
-            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+        if message is None:
+            message = {{ method.py_input_message_type }}()
 
         {% endif %}
         async for response in self._unary_stream(
             "{{ method.route }}",
-            {{ method.py_input_message_param }},
+            message,
             {{ method.py_output_message_type }},
             timeout=timeout,
             deadline=deadline,
@@ -157,7 +157,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
             {% if method.client_streaming %}
         return await self._stream_unary(
             "{{ method.route }}",
-            {{ method.py_input_message_param }}_iterator,
+            messages,
             {{ method.py_input_message_type }},
             {{ method.py_output_message_type }},
             timeout=timeout,
@@ -166,13 +166,13 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
         )
             {% else %}{# i.e. not client streaming #}
         {% if method.is_input_msg_empty %}
-        if {{ method.py_input_message_param }} is None:
-            {{ method.py_input_message_param }} = {{ method.py_input_message_type }}()
+        if message is None:
+            message = {{ method.py_input_message_type }}()
 
         {% endif %}
         return await self._unary_unary(
             "{{ method.route }}",
-            {{ method.py_input_message_param }},
+            message,
             {{ method.py_output_message_type }},
             timeout=timeout,
             deadline=deadline,
@@ -199,10 +199,10 @@ class {{ service.py_name }}Base(ServiceBase):
     {% for method in service.methods %}
     async def {{ method.py_name }}(self
         {%- if not method.client_streaming -%}
-            , {{ method.py_input_message_param }}: "{{ method.py_input_message_type }}"
+            , message: "{{ method.py_input_message_type }}"
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , {{ method.py_input_message_param }}_iterator: {{ output_file.settings.typing_compiler.async_iterator(method.py_input_message_type) }}
+            , messages: {{ output_file.settings.typing_compiler.async_iterator(method.py_input_message_type) }}
         {%- endif -%}
             ) -> {% if method.server_streaming %}{{ output_file.settings.typing_compiler.async_iterator(method.py_output_message_type) }}{% else %}"{{ method.py_output_message_type }}"{% endif %}:
         {% if method.comment %}
