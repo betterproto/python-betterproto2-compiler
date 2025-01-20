@@ -36,6 +36,7 @@ from dataclasses import (
 import betterproto2
 from betterproto2 import unwrap
 
+from betterproto2_compiler.casing import safe_snake_case
 from betterproto2_compiler.compile.importing import get_type_reference, parse_source_type_name
 from betterproto2_compiler.compile.naming import (
     pythonize_class_name,
@@ -609,7 +610,7 @@ class ServiceMethodCompiler(ProtoContentBase):
         str
             Param name corresponding to py_input_message_type.
         """
-        return pythonize_field_name(self.py_input_message_type)
+        return safe_snake_case(self.py_input_message_type.split(".")[-1])
 
     @property
     def py_output_message_type(self) -> str:
