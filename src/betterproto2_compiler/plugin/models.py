@@ -601,17 +601,6 @@ class ServiceMethodCompiler(ProtoContentBase):
         return not bool(msg.fields)
 
     @property
-    def py_input_message_param(self) -> str:
-        """Param name corresponding to py_input_message_type.
-
-        Returns
-        -------
-        str
-            Param name corresponding to py_input_message_type.
-        """
-        return pythonize_field_name(self.py_input_message_type)
-
-    @property
     def py_output_message_type(self) -> str:
         """String representation of the Python type corresponding to the
         output message.

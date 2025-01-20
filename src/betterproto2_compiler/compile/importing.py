@@ -114,7 +114,7 @@ def reference_absolute(imports: set[str], py_package: list[str], py_type: str) -
     Returns a reference to a python type located in the root, i.e. sys.path.
     """
     string_import = ".".join(py_package)
-    string_alias = safe_snake_case(string_import)
+    string_alias = "__".join([safe_snake_case(name) for name in py_package])
     imports.add(f"import {string_import} as {string_alias}")
     return f"{string_alias}.{py_type}"
 
@@ -175,6 +175,11 @@ def reference_cousin(current_package: list[str], imports: set[str], py_package: 
     string_from = f".{'.' * distance_up}" + ".".join(py_package[len(shared_ancestry) : -1])
     string_import = py_package[-1]
     # Add trailing __ to avoid name mangling (python.org/dev/peps/pep-0008/#id34)
-    string_alias = f"{'_' * distance_up}" + safe_snake_case(".".join(py_package[len(shared_ancestry) :])) + "__"
+    # string_alias = f"{'_' * distance_up}" + safe_snake_case(".".join(py_package[len(shared_ancestry) :])) + "__"
+    string_alias = (
+        f"{'_' * distance_up}"
+        + "__".join([safe_snake_case(name) for name in py_package[len(shared_ancestry) :]])
+        + "__"
+    )
     imports.add(f"from {string_from} import {string_import} as {string_alias}")
     return f"{string_alias}.{py_type}"
