@@ -106,11 +106,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
                 {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-<<<<<<< HEAD
-            , messages: "{{ output_file.settings.typing_compiler.union(output_file.settings.typing_compiler.async_iterable(method.py_input_message_type), output_file.settings.typing_compiler.iterable(method.py_input_message_type)) }}"
-=======
-            , {{ method.py_input_message_param }}_iterator: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
->>>>>>> b85a5cc (Remove typing compiler)
+            , message: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
         {%- endif -%}
             ,
             *
