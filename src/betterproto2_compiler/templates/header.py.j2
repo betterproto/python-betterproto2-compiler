@@ -21,6 +21,8 @@ __all__ = (
 import builtins
 import datetime
 import warnings
+from collections.abc import AsyncIterable, AsyncIterator, Iterable
+from typing import TYPE_CHECKING
 
 {% if output_file.settings.pydantic_dataclasses %}
 from pydantic.dataclasses import dataclass
@@ -29,20 +31,11 @@ from pydantic import model_validator
 from dataclasses import dataclass
 {% endif %}
 
-{% set typing_imports = output_file.settings.typing_compiler.imports() %}
-{% if typing_imports %}
-{% for line in output_file.settings.typing_compiler.import_lines() %}
-{{ line }}
-{% endfor %}
-{% endif %}
-
 import betterproto2
 {% if output_file.services %}
 from betterproto2.grpc.grpclib_server import ServiceBase
 import grpclib
 {% endif %}
-
-from typing import TYPE_CHECKING
 
 {# Import the message pool of the generated code. #}
 {% if output_file.package %}

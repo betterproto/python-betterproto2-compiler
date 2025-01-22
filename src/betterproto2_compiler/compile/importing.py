@@ -83,7 +83,7 @@ def get_type_reference(
     if unwrap:
         if source_type in WRAPPER_TYPES:
             wrapped_type = type(WRAPPER_TYPES[source_type]().value)
-            return settings.typing_compiler.optional(wrapped_type.__name__)
+            return f"{wrapped_type.__name__} | None"
 
         if source_type == ".google.protobuf.Duration":
             return "datetime.timedelta"
