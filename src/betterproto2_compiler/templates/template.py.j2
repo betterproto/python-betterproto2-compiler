@@ -106,7 +106,7 @@ class {{ service.py_name }}Stub(betterproto2.ServiceStub):
                 {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , message: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
+            , messages: "AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}]"
         {%- endif -%}
             ,
             *
