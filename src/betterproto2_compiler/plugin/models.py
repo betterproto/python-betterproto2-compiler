@@ -411,7 +411,7 @@ class FieldCompiler(ProtoContentBase):
         if self.use_builtins:
             py_type = f"builtins.{py_type}"
         if self.repeated:
-            return f"list[{py_type}]"
+            return f"betterproto2.List[{py_type}]"
         if self.optional:
             return f"{py_type} | None"
         return py_type
