@@ -31,11 +31,6 @@ from .models import (
     is_map,
     is_oneof,
 )
-from .typing_compiler import (
-    DirectImportTypingCompiler,
-    NoTyping310TypingCompiler,
-    TypingImportTypingCompiler,
-)
 
 
 def traverse(
@@ -65,25 +60,7 @@ def traverse(
 
 
 def get_settings(plugin_options: list[str]) -> Settings:
-    # Gather any typing generation options.
-    typing_opts = [opt[len("typing.") :] for opt in plugin_options if opt.startswith("typing.")]
-
-    if len(typing_opts) > 1:
-        raise ValueError("Multiple typing options provided")
-
-    # Set the compiler type.
-    typing_opt = typing_opts[0] if typing_opts else "direct"
-    if typing_opt == "direct":
-        typing_compiler = DirectImportTypingCompiler()
-    elif typing_opt == "root":
-        typing_compiler = TypingImportTypingCompiler()
-    elif typing_opt == "310":
-        typing_compiler = NoTyping310TypingCompiler()
-    else:
-        raise ValueError("Invalid typing option provided")
-
     return Settings(
-        typing_compiler=typing_compiler,
         pydantic_dataclasses="pydantic_dataclasses" in plugin_options,
     )
 
@@ -203,7 +180,6 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
             elif is_oneof(field):
@@ -213,7 +189,6 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
             else:
@@ -223,7 +198,6 @@ def read_protobuf_type(
                         message=message_data,
                         proto_obj=field,
                         path=path + [2, index],
-                        typing_compiler=output_package.settings.typing_compiler,
                     )
                 )
 

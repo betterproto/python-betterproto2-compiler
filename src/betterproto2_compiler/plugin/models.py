@@ -57,7 +57,6 @@ from betterproto2_compiler.lib.google.protobuf import (
     ServiceDescriptorProto,
 )
 from betterproto2_compiler.lib.google.protobuf.compiler import CodeGeneratorRequest
-from betterproto2_compiler.plugin.typing_compiler import TypingCompiler
 from betterproto2_compiler.settings import Settings
 
 # Organize proto types into categories
@@ -298,7 +297,6 @@ def is_oneof(proto_field_obj: FieldDescriptorProto) -> bool:
 
 @dataclass(kw_only=True)
 class FieldCompiler(ProtoContentBase):
-    typing_compiler: TypingCompiler
     builtins_types: set[str] = field(default_factory=set)
 
     message: MessageCompiler
@@ -413,9 +411,9 @@ class FieldCompiler(ProtoContentBase):
         if self.use_builtins:
             py_type = f"builtins.{py_type}"
         if self.repeated:
-            return self.typing_compiler.list(py_type)
+            return f"list[{py_type}]"
         if self.optional:
-            return self.typing_compiler.optional(py_type)
+            return f"{py_type} | None"
         return py_type
 
 
@@ -449,14 +447,12 @@ class MapEntryCompiler(FieldCompiler):
                 self.py_k_type = FieldCompiler(
                     source_file=self.source_file,
                     proto_obj=nested.field[0],  # key
-                    typing_compiler=self.typing_compiler,
                     path=[],
                     message=self.message,
                 ).py_type
                 self.py_v_type = FieldCompiler(
                     source_file=self.source_file,
                     proto_obj=nested.field[1],  # value
-                    typing_compiler=self.typing_compiler,
                     path=[],
                     message=self.message,
                 ).py_type
@@ -482,7 +478,7 @@ class MapEntryCompiler(FieldCompiler):
 
     @property
     def annotation(self) -> str:
-        return self.typing_compiler.dict(self.py_k_type, self.py_v_type)
+        return f"dict[{self.py_k_type}, {self.py_v_type}]"
 
     @property
     def repeated(self) -> bool:
