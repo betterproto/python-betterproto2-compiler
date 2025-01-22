@@ -251,14 +251,6 @@ class MessageCompiler(ProtoContentBase):
         return any(isinstance(field, OneOfFieldCompiler) for field in self.fields)
 
     @property
-    def has_message_field(self) -> bool:
-        return any(
-            field.proto_obj.type in PROTO_MESSAGE_TYPES
-            for field in self.fields
-            if isinstance(field.proto_obj, FieldDescriptorProto)
-        )
-
-    @property
     def custom_methods(self) -> list[str]:
         """
         Return a list of the custom methods.
