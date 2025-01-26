@@ -1,3 +1,5 @@
+import typing
+
 import betterproto2
 
 from betterproto2_compiler.lib.google.protobuf import Any as VanillaAny
@@ -31,6 +33,14 @@ class Any(VanillaAny):
 
         return message_type().parse(self.value)
 
-    def to_dict(self) -> dict:  # pyright: ignore [reportIncompatibleMethodOverride]
-        # TOOO improve when dict is updated
-        return {"@type": self.type_url, "value": self.unpack().to_dict()}
+    def to_dict(self, **kwargs) -> dict[str, typing.Any]:
+        output: dict[str, typing.Any] = {"@type": self.type_url}
+
+        value = self.unpack()
+
+        if type(value).to_dict == betterproto2.Message.to_dict:
+            output.update(value.to_dict(**kwargs))
+        else:
+            output["value"] = value.to_dict(**kwargs)
+
+        return output
