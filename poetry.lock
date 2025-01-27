@@ -46,27 +46,24 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "betterproto2"
-version = "0.2.2"
+version = "0.2.3"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
-python-versions = ">=3.10,<4.0"
+python-versions = "<4.0,>=3.10"
 groups = ["main"]
-files = []
-develop = false
+files = [
+    {file = "betterproto2-0.2.3-py3-none-any.whl", hash = "sha256:fe39192af360bc65768b348cf671df8ebc223c52229018f73bbb155a1388a37c"},
+    {file = "betterproto2-0.2.3.tar.gz", hash = "sha256:621f973d9428479328a1c10618e890d59cf4adac0e49097b287129ec5db6ffed"},
+]
 
 [package.dependencies]
-grpclib = "^0.4.1"
-python-dateutil = "^2.8"
-typing-extensions = "^4.7.1"
+python-dateutil = ">=2.8,<3.0"
+typing-extensions = ">=4.7.1,<5.0.0"
 
 [package.extras]
+all = ["betterproto2-rust-codec", "grpclib"]
+grpc-async = ["grpclib"]
 rust-codec = ["betterproto2-rust-codec"]
-
-[package.source]
-type = "git"
-url = "https://github.com/betterproto/python-betterproto2"
-reference = "HEAD"
-resolved_reference = "668a2a16bb315deb8e8ef9226c5f938f5e3bb213"
 
 [[package]]
 name = "certifi"
@@ -2225,4 +2222,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "82fe92cf46411a2c6b5eb2ec9691a80653a829fa603e3ef8dae8348afd5dd09d"
+content-hash = "0caa5c18f7b28dacb378eb9e3030fd58a69c88e3baf5706599b7c1e3b5087469"
