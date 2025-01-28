@@ -45,7 +45,7 @@ ipykernel = "^6.29.5"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.4"
-protobuf = "^4"
+protobuf = "^5.29.3"
 
 [tool.ruff]
 extend-exclude = ["tests/output_*", "src/betterproto2_compiler/lib"]
