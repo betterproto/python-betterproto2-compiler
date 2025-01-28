@@ -235,7 +235,7 @@ class {{ service.py_name }}Base(ServiceBase):
 
     {% endfor %}
 
-    def __mapping__(self) -> "dict[str, grpclib.const.Handler":
+    def __mapping__(self) -> "dict[str, grpclib.const.Handler]":
         return {
         {% for method in service.methods %}
         "{{ method.route }}": grpclib.const.Handler(
