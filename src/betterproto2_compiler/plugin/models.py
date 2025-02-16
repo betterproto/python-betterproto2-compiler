@@ -320,7 +320,7 @@ class FieldCompiler(ProtoContentBase):
         elif self.repeated:
             args.append("repeated=True")
         elif self.field_type == FieldType.TYPE_ENUM:
-            args.append(f"default_factory=lambda: {self.py_type}.try_value(0)")
+            args.append(f"default_factory=lambda: {self.py_type}(0)")
         return args
 
     @property
