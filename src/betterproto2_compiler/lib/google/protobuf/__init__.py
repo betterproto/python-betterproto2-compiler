@@ -98,7 +98,7 @@ import betterproto2
 
 from ...message_pool import default_message_pool
 
-betterproto2.check_compiler_version("0.2.0")
+betterproto2.check_compiler_version("0.3.0")
 
 
 class Edition(betterproto2.Enum):
@@ -792,7 +792,7 @@ class Api(betterproto2.Message):
     Included interfaces. See [Mixin][].
     """
 
-    syntax: "Syntax" = betterproto2.field(7, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax.try_value(0))
+    syntax: "Syntax" = betterproto2.field(7, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax(0))
     """
     The source syntax of the service.
     """
@@ -1082,7 +1082,7 @@ class Enum(betterproto2.Message):
     The source context.
     """
 
-    syntax: "Syntax" = betterproto2.field(5, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax.try_value(0))
+    syntax: "Syntax" = betterproto2.field(5, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax(0))
     """
     The source syntax.
     """
@@ -1299,7 +1299,7 @@ class ExtensionRangeOptions(betterproto2.Message):
     """
 
     verification: "ExtensionRangeOptionsVerificationState" = betterproto2.field(
-        3, betterproto2.TYPE_ENUM, default_factory=lambda: ExtensionRangeOptionsVerificationState.try_value(0)
+        3, betterproto2.TYPE_ENUM, default_factory=lambda: ExtensionRangeOptionsVerificationState(0)
     )
     """
     The verification state of the range.
@@ -1365,27 +1365,27 @@ class FeatureSet(betterproto2.Message):
     """
 
     field_presence: "FeatureSetFieldPresence" = betterproto2.field(
-        1, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetFieldPresence.try_value(0)
+        1, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetFieldPresence(0)
     )
 
     enum_type: "FeatureSetEnumType" = betterproto2.field(
-        2, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetEnumType.try_value(0)
+        2, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetEnumType(0)
     )
 
     repeated_field_encoding: "FeatureSetRepeatedFieldEncoding" = betterproto2.field(
-        3, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetRepeatedFieldEncoding.try_value(0)
+        3, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetRepeatedFieldEncoding(0)
     )
 
     utf8_validation: "FeatureSetUtf8Validation" = betterproto2.field(
-        4, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetUtf8Validation.try_value(0)
+        4, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetUtf8Validation(0)
     )
 
     message_encoding: "FeatureSetMessageEncoding" = betterproto2.field(
-        5, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetMessageEncoding.try_value(0)
+        5, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetMessageEncoding(0)
     )
 
     json_format: "FeatureSetJsonFormat" = betterproto2.field(
-        6, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetJsonFormat.try_value(0)
+        6, betterproto2.TYPE_ENUM, default_factory=lambda: FeatureSetJsonFormat(0)
     )
 
 
@@ -1406,7 +1406,7 @@ class FeatureSetDefaults(betterproto2.Message):
     )
 
     minimum_edition: "Edition" = betterproto2.field(
-        4, betterproto2.TYPE_ENUM, default_factory=lambda: Edition.try_value(0)
+        4, betterproto2.TYPE_ENUM, default_factory=lambda: Edition(0)
     )
     """
     The minimum supported edition (inclusive) when this was constructed.
@@ -1414,7 +1414,7 @@ class FeatureSetDefaults(betterproto2.Message):
     """
 
     maximum_edition: "Edition" = betterproto2.field(
-        5, betterproto2.TYPE_ENUM, default_factory=lambda: Edition.try_value(0)
+        5, betterproto2.TYPE_ENUM, default_factory=lambda: Edition(0)
     )
     """
     The maximum known edition (inclusive) when this was constructed. Editions
@@ -1434,7 +1434,7 @@ class FeatureSetDefaultsFeatureSetEditionDefault(betterproto2.Message):
     be used.  This field must be in strict ascending order by edition.
     """
 
-    edition: "Edition" = betterproto2.field(3, betterproto2.TYPE_ENUM, default_factory=lambda: Edition.try_value(0))
+    edition: "Edition" = betterproto2.field(3, betterproto2.TYPE_ENUM, default_factory=lambda: Edition(0))
 
     features: "Optional[FeatureSet]" = betterproto2.field(2, betterproto2.TYPE_MESSAGE, optional=True)
 
@@ -1450,13 +1450,13 @@ class Field(betterproto2.Message):
     A single field of a message type.
     """
 
-    kind: "FieldKind" = betterproto2.field(1, betterproto2.TYPE_ENUM, default_factory=lambda: FieldKind.try_value(0))
+    kind: "FieldKind" = betterproto2.field(1, betterproto2.TYPE_ENUM, default_factory=lambda: FieldKind(0))
     """
     The field type.
     """
 
     cardinality: "FieldCardinality" = betterproto2.field(
-        2, betterproto2.TYPE_ENUM, default_factory=lambda: FieldCardinality.try_value(0)
+        2, betterproto2.TYPE_ENUM, default_factory=lambda: FieldCardinality(0)
     )
     """
     The field cardinality.
@@ -1519,11 +1519,11 @@ class FieldDescriptorProto(betterproto2.Message):
     number: "int" = betterproto2.field(3, betterproto2.TYPE_INT32)
 
     label: "FieldDescriptorProtoLabel" = betterproto2.field(
-        4, betterproto2.TYPE_ENUM, default_factory=lambda: FieldDescriptorProtoLabel.try_value(0)
+        4, betterproto2.TYPE_ENUM, default_factory=lambda: FieldDescriptorProtoLabel(0)
     )
 
     type: "FieldDescriptorProtoType" = betterproto2.field(
-        5, betterproto2.TYPE_ENUM, default_factory=lambda: FieldDescriptorProtoType.try_value(0)
+        5, betterproto2.TYPE_ENUM, default_factory=lambda: FieldDescriptorProtoType(0)
     )
     """
     If type_name is set, this need not be set.  If both this and type_name
@@ -1813,7 +1813,7 @@ default_message_pool.register_message("google.protobuf", "FieldMask", FieldMask)
 @dataclass(eq=False, repr=False)
 class FieldOptions(betterproto2.Message):
     ctype: "FieldOptionsCType" = betterproto2.field(
-        1, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsCType.try_value(0)
+        1, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsCType(0)
     )
     """
     The ctype option instructs the C++ code generator to use a different
@@ -1836,7 +1836,7 @@ class FieldOptions(betterproto2.Message):
     """
 
     jstype: "FieldOptionsJsType" = betterproto2.field(
-        6, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsJsType.try_value(0)
+        6, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsJsType(0)
     )
     """
     The jstype option determines the JavaScript type used for values of the
@@ -1913,7 +1913,7 @@ class FieldOptions(betterproto2.Message):
     """
 
     retention: "FieldOptionsOptionRetention" = betterproto2.field(
-        17, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsOptionRetention.try_value(0)
+        17, betterproto2.TYPE_ENUM, default_factory=lambda: FieldOptionsOptionRetention(0)
     )
 
     targets: "List[FieldOptionsOptionTargetType]" = betterproto2.field(19, betterproto2.TYPE_ENUM, repeated=True)
@@ -1940,7 +1940,7 @@ default_message_pool.register_message("google.protobuf", "FieldOptions", FieldOp
 
 @dataclass(eq=False, repr=False)
 class FieldOptionsEditionDefault(betterproto2.Message):
-    edition: "Edition" = betterproto2.field(3, betterproto2.TYPE_ENUM, default_factory=lambda: Edition.try_value(0))
+    edition: "Edition" = betterproto2.field(3, betterproto2.TYPE_ENUM, default_factory=lambda: Edition(0))
 
     value: "str" = betterproto2.field(2, betterproto2.TYPE_STRING)
     """
@@ -2012,7 +2012,7 @@ class FileDescriptorProto(betterproto2.Message):
     If `edition` is present, this value must be "editions".
     """
 
-    edition: "Edition" = betterproto2.field(14, betterproto2.TYPE_ENUM, default_factory=lambda: Edition.try_value(0))
+    edition: "Edition" = betterproto2.field(14, betterproto2.TYPE_ENUM, default_factory=lambda: Edition(0))
     """
     The edition of the proto file.
     """
@@ -2113,7 +2113,7 @@ class FileOptions(betterproto2.Message):
     """
 
     optimize_for: "FileOptionsOptimizeMode" = betterproto2.field(
-        9, betterproto2.TYPE_ENUM, default_factory=lambda: FileOptionsOptimizeMode.try_value(0)
+        9, betterproto2.TYPE_ENUM, default_factory=lambda: FileOptionsOptimizeMode(0)
     )
 
     go_package: "str" = betterproto2.field(11, betterproto2.TYPE_STRING)
@@ -2289,7 +2289,7 @@ class GeneratedCodeInfoAnnotation(betterproto2.Message):
     """
 
     semantic: "GeneratedCodeInfoAnnotationSemantic" = betterproto2.field(
-        5, betterproto2.TYPE_ENUM, default_factory=lambda: GeneratedCodeInfoAnnotationSemantic.try_value(0)
+        5, betterproto2.TYPE_ENUM, default_factory=lambda: GeneratedCodeInfoAnnotationSemantic(0)
     )
 
 
@@ -2482,7 +2482,7 @@ class Method(betterproto2.Message):
     Any metadata attached to the method.
     """
 
-    syntax: "Syntax" = betterproto2.field(7, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax.try_value(0))
+    syntax: "Syntax" = betterproto2.field(7, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax(0))
     """
     The source syntax of this method.
     """
@@ -2539,7 +2539,7 @@ class MethodOptions(betterproto2.Message):
     """
 
     idempotency_level: "MethodOptionsIdempotencyLevel" = betterproto2.field(
-        34, betterproto2.TYPE_ENUM, default_factory=lambda: MethodOptionsIdempotencyLevel.try_value(0)
+        34, betterproto2.TYPE_ENUM, default_factory=lambda: MethodOptionsIdempotencyLevel(0)
     )
 
     features: "Optional[FeatureSet]" = betterproto2.field(35, betterproto2.TYPE_MESSAGE, optional=True)
@@ -3162,7 +3162,7 @@ class Type(betterproto2.Message):
     The source context.
     """
 
-    syntax: "Syntax" = betterproto2.field(6, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax.try_value(0))
+    syntax: "Syntax" = betterproto2.field(6, betterproto2.TYPE_ENUM, default_factory=lambda: Syntax(0))
     """
     The source syntax.
     """
