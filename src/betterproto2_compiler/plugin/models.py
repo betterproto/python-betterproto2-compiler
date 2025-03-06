@@ -153,7 +153,6 @@ class ProtoContentBase:
         """
         return get_comment(proto_file=self.source_file, path=self.path)
 
-
 @dataclass(kw_only=True)
 class PluginRequestCompiler:
     plugin_request_obj: CodeGeneratorRequest
@@ -261,6 +260,10 @@ class MessageCompiler(ProtoContentBase):
             methods_source.append(source.strip())
 
         return methods_source
+    
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
 
 
 def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProto) -> bool:
@@ -523,7 +526,10 @@ class EnumDefinitionCompiler(ProtoContentBase):
     @property
     def deprecated(self) -> bool:
         return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
-
+    
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
 
 @dataclass(kw_only=True)
 class ServiceCompiler(ProtoContentBase):
