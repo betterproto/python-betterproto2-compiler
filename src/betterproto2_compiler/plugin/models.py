@@ -129,10 +129,9 @@ def get_comment(
             # We don't add this space to the generated file.
             lines = [line[1:] if line and line[0] == " " else line for line in lines]
 
-            return "\n".join(lines)
+            return "\n".join(lines).replace("\\","\\\\")
 
     return ""
-
 
 @dataclass(kw_only=True)
 class ProtoContentBase:
