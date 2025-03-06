@@ -129,10 +129,9 @@ def get_comment(
             # We don't add this space to the generated file.
             lines = [line[1:] if line and line[0] == " " else line for line in lines]
 
-            return "\n".join(lines)
+            return "\n".join(lines).replace("\\","\\\\")
 
     return ""
-
 
 @dataclass(kw_only=True)
 class ProtoContentBase:
@@ -153,7 +152,6 @@ class ProtoContentBase:
         for this object.
         """
         return get_comment(proto_file=self.source_file, path=self.path)
-
 
 @dataclass(kw_only=True)
 class PluginRequestCompiler:
@@ -262,6 +260,10 @@ class MessageCompiler(ProtoContentBase):
             methods_source.append(source.strip())
 
         return methods_source
+    
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
 
 
 def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProto) -> bool:
@@ -524,7 +526,10 @@ class EnumDefinitionCompiler(ProtoContentBase):
     @property
     def deprecated(self) -> bool:
         return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
-
+    
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
 
 @dataclass(kw_only=True)
 class ServiceCompiler(ProtoContentBase):
