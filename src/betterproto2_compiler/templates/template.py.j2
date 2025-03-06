@@ -6,6 +6,10 @@ class {{ enum.py_name | add_to_all }}(betterproto2.Enum):
     """
     {% endif %}
 
+    @staticmethod
+    def _serialized_pb():
+        return {{ enum.descriptor }} 
+
     {% for entry in enum.entries %}
     {{ entry.name }} = {{ entry.value }}
     {% if entry.comment %}
@@ -45,6 +49,10 @@ class {{ message.py_name | add_to_all }}(betterproto2.Message):
     """
     {% endif %}
 
+    @staticmethod
+    def _serialized_pb():
+        return {{ message.descriptor }} 
+    
     {% for field in message.fields %}
     {{ field.get_field_string() }}
     {% if field.comment %}

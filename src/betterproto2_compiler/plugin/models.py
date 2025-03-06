@@ -266,6 +266,10 @@ class MessageCompiler(ProtoContentBase):
 
         return methods_source
 
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
+
 
 def is_map(proto_field_obj: FieldDescriptorProto, parent_message: DescriptorProto) -> bool:
     """True if proto_field_obj is a map, otherwise False."""
@@ -594,6 +598,10 @@ class EnumDefinitionCompiler(ProtoContentBase):
     @property
     def deprecated(self) -> bool:
         return bool(self.proto_obj.options and self.proto_obj.options.deprecated)
+
+    @property
+    def descriptor(self):
+        return self.proto_obj.SerializeToString()
 
 
 @dataclass(kw_only=True)
