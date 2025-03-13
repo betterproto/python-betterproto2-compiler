@@ -56,3 +56,7 @@ service Service { // Documentation of service 3
     // other line 2
     rpc get(Test) returns (Test); // Documentation of method 3
 }
+
+// A comment with backslashes \ and triple quotes """
+// Simple quotes are not escaped "
+message ComplexDocumentation {}
