@@ -33,11 +33,9 @@ from dataclasses import dataclass
 {% endif %}
 
 import betterproto2
-{% if output_file.services %}
 from betterproto2.grpc.grpclib_server import ServiceBase
 import grpc
 import grpclib
-{% endif %}
 
 {# Import the message pool of the generated code. #}
 {% if output_file.package %}
