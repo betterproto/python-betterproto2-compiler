@@ -21,7 +21,7 @@ __all__ = (
 import builtins
 import datetime
 import warnings
-from collections.abc import AsyncIterable, AsyncIterator, Iterable
+from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 import typing
 from typing import TYPE_CHECKING
 
@@ -33,10 +33,9 @@ from dataclasses import dataclass
 {% endif %}
 
 import betterproto2
-{% if output_file.services %}
 from betterproto2.grpc.grpclib_server import ServiceBase
+import grpc
 import grpclib
-{% endif %}
 
 {# Import the message pool of the generated code. #}
 {% if output_file.package %}
