@@ -33,7 +33,7 @@
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )(messages):
+        )(iter(messages)):
             yield response
       {% else %}
         {% if method.is_input_msg_empty %}
@@ -55,7 +55,7 @@
             "{{ method.route }}",
             {{ method.py_input_message_type }}.SerializeToString,
             {{ method.py_output_message_type }}.FromString,
-        )(messages)
+        )(iter(messages))
       {% else %}
         {% if method.is_input_msg_empty %}
         if message is None:
