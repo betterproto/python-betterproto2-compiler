@@ -1,14 +1,11 @@
 import asyncio
 import atexit
-import importlib
 import os
 import platform
 import sys
 import tempfile
-from collections.abc import Callable, Generator
-from dataclasses import dataclass
+from collections.abc import Generator
 from pathlib import Path
-from types import ModuleType
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
@@ -86,43 +83,3 @@ async def protoc(
     )
     stdout, stderr = await proc.communicate()
     return stdout, stderr, proc.returncode
-
-
-@dataclass
-class TestCaseJsonFile:
-    json: str
-    test_name: str
-    file_name: str
-
-    def belongs_to(self, non_symmetrical_json: dict[str, tuple[str, ...]]) -> bool:
-        return self.file_name in non_symmetrical_json.get(self.test_name, ())
-
-
-def find_module(module: ModuleType, predicate: Callable[[ModuleType], bool]) -> ModuleType | None:
-    """
-    Recursively search module tree for a module that matches the search predicate.
-    Assumes that the submodules are directories containing __init__.py.
-
-    Example:
-
-        # find module inside foo that contains Test
-        import foo
-        test_module = find_module(foo, lambda m: hasattr(m, 'Test'))
-    """
-    if predicate(module):
-        return module
-
-    module_path = Path(*module.__path__)
-
-    for sub in [sub.parent for sub in module_path.glob("**/__init__.py")]:
-        if sub == module_path:
-            continue
-        sub_module_path = sub.relative_to(module_path)
-        sub_module_name = ".".join(sub_module_path.parts)
-
-        sub_module = importlib.import_module(f".{sub_module_name}", module.__name__)
-
-        if predicate(sub_module):
-            return sub_module
-
-    return None
