@@ -98,30 +98,6 @@ class TestCaseJsonFile:
         return self.file_name in non_symmetrical_json.get(self.test_name, ())
 
 
-def get_test_case_json_data(test_case_name: str, *json_file_names: str) -> list[TestCaseJsonFile]:
-    """
-    :return:
-        A list of all files found in "{inputs_path}/test_case_name" with names matching
-        f"{test_case_name}.json" or f"{test_case_name}_*.json", OR given by
-        json_file_names
-    """
-    test_case_dir = inputs_path.joinpath(test_case_name)
-    possible_file_paths = [
-        *(test_case_dir.joinpath(json_file_name) for json_file_name in json_file_names),
-        test_case_dir.joinpath(f"{test_case_name}.json"),
-        *test_case_dir.glob(f"{test_case_name}_*.json"),
-    ]
-
-    result = []
-    for test_data_file_path in possible_file_paths:
-        if not test_data_file_path.exists():
-            continue
-        with test_data_file_path.open("r") as fh:
-            result.append(TestCaseJsonFile(fh.read(), test_case_name, test_data_file_path.name.split(".")[0]))
-
-    return result
-
-
 def find_module(module: ModuleType, predicate: Callable[[ModuleType], bool]) -> ModuleType | None:
     """
     Recursively search module tree for a module that matches the search predicate.
