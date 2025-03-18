@@ -27,22 +27,12 @@ def clear_directory(dir_path: Path):
             file_or_directory.unlink()
 
 
-async def generate(whitelist: set[str], verbose: bool):
+async def generate(verbose: bool):
     test_case_names = set(get_directories(inputs_path)) - {"__pycache__"}
-
-    path_whitelist = set()
-    name_whitelist = set()
-    for item in whitelist:
-        if item in test_case_names:
-            name_whitelist.add(item)
-            continue
-        path_whitelist.add(item)
 
     generation_tasks = []
     for test_case_name in sorted(test_case_names):
         test_case_input_path = inputs_path.joinpath(test_case_name).resolve()
-        if whitelist and str(test_case_input_path) not in path_whitelist and test_case_name not in name_whitelist:
-            continue
         generation_tasks.append(generate_test_case_output(test_case_input_path, test_case_name, verbose))
 
     failed_test_cases = []
@@ -139,32 +129,13 @@ async def generate_test_case_output(test_case_input_path: Path, test_case_name: 
     return max(ref_code, plg_code, plg_code_pyd)
 
 
-HELP = "\n".join(
-    (
-        "Usage: python generate.py [-h] [-v] [DIRECTORIES or NAMES]",
-        "Generate python classes for standard tests.",
-        "",
-        "DIRECTORIES    One or more relative or absolute directories of test-cases to generateclasses for.",
-        "               python generate.py inputs/bool inputs/double inputs/enum",
-        "",
-        "NAMES          One or more test-case names to generate classes for.",
-        "               python generate.py bool double enums",
-    ),
-)
-
-
 def main():
-    if set(sys.argv).intersection({"-h", "--help"}):
-        print(HELP)
-        return
     if sys.argv[1:2] == ["-v"]:
         verbose = True
-        whitelist = set(sys.argv[2:])
     else:
         verbose = False
-        whitelist = set(sys.argv[1:])
 
-    asyncio.run(generate(whitelist, verbose))
+    asyncio.run(generate(verbose))
 
 
 if __name__ == "__main__":
