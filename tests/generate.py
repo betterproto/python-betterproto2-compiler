@@ -139,24 +139,7 @@ async def generate_test_case_output(test_case_input_path: Path, test_case_name: 
     return max(ref_code, plg_code, plg_code_pyd)
 
 
-HELP = "\n".join(
-    (
-        "Usage: python generate.py [-h] [-v] [DIRECTORIES or NAMES]",
-        "Generate python classes for standard tests.",
-        "",
-        "DIRECTORIES    One or more relative or absolute directories of test-cases to generateclasses for.",
-        "               python generate.py inputs/bool inputs/double inputs/enum",
-        "",
-        "NAMES          One or more test-case names to generate classes for.",
-        "               python generate.py bool double enums",
-    ),
-)
-
-
 def main():
-    if set(sys.argv).intersection({"-h", "--help"}):
-        print(HELP)
-        return
     if sys.argv[1:2] == ["-v"]:
         verbose = True
         whitelist = set(sys.argv[2:])
