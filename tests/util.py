@@ -63,6 +63,7 @@ async def protoc(
             f"--plugin=protoc-gen-custom={plugin_path.as_posix()}",
             "--experimental_allow_proto3_optional",
             "--custom_opt=pydantic_dataclasses",
+            "--custom_opt=client_generation=async_sync",
             f"--proto_path={path.as_posix()}",
             f"--custom_out={output_dir.as_posix()}",
             *[p.as_posix() for p in path.glob("*.proto")],
@@ -76,6 +77,10 @@ async def protoc(
             f"--{python_out_option}={output_dir.as_posix()}",
             *[p.as_posix() for p in path.glob("*.proto")],
         ]
+
+        if not reference:
+            command.insert(3, "--python_betterproto2_opt=client_generation=async_sync")
+
     proc = await asyncio.create_subprocess_exec(
         *command,
         stdout=asyncio.subprocess.PIPE,
