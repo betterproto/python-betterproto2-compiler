@@ -1,5 +1,10 @@
+import sys
 from dataclasses import dataclass
-from enum import StrEnum
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from strenum import StrEnum
 
 
 class ClientGeneration(StrEnum):
