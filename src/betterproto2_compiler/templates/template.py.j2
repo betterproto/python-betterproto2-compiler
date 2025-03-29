@@ -87,8 +87,15 @@ default_message_pool.register_message("{{ output_file.package }}", "{{ message.p
 {% endfor %}
 
 {% for _, service in output_file.services|dictsort(by="key") %}
-{% include "service_stub_async.py.j2" %}
+
+{% if output_file.settings.client_generation.is_sync_generated %}
 {% include "service_stub_sync.py.j2" %}
+{% endif %}
+
+{% if output_file.settings.client_generation.is_async_generated %}
+{% include "service_stub_async.py.j2" %}
+{% endif %}
+
 {% endfor %}
 
 {% for i in output_file.imports_end %}

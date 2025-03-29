@@ -1,7 +1,7 @@
 {% extends "service_stub.py.j2" %}
 
 {# Class definition #}
-{% block class_name %}{{ service.py_name }}Stub{% endblock %}
+{% block class_name %}{{ service.py_name }}{% if output_file.settings.client_generation.is_async_prefixed %}Async{% endif %}Stub{% endblock %}
 {% block inherit_from %}betterproto2.ServiceStub{% endblock %}
 
 {# Methods definition #}
