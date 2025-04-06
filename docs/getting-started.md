@@ -46,6 +46,7 @@ protoc -I . --python_betterproto2_out=lib example.proto
 
 If you installed `protoc` with `grpc-tools`, the command will be:
 
-```mkdir lib
-python -m grpc-tools.protoc -I . --python_betterproto2_out=lib example.proto
+```
+mkdir lib
+python -m grpc.tools.protoc -I . --python_betterproto2_out=lib example.proto
 ```
