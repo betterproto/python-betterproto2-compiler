@@ -81,10 +81,6 @@ def get_type_reference(
     necessary. Unwraps well known type if required.
     """
     if unwrap:
-        if source_type in WRAPPER_TYPES:
-            wrapped_type = type(WRAPPER_TYPES[source_type]().value)
-            return f"{wrapped_type.__name__} | None"
-
         if source_type == ".google.protobuf.Duration":
             return "datetime.timedelta"
 

@@ -26,14 +26,12 @@ such as a pythonized name, that will be calculated from proto_obj.
 
 import builtins
 import inspect
-import re
 from collections.abc import Iterator
 from dataclasses import (
     dataclass,
     field,
 )
 
-import betterproto2
 from betterproto2 import unwrap
 
 from betterproto2_compiler.compile.importing import get_type_reference, parse_source_type_name
@@ -43,7 +41,7 @@ from betterproto2_compiler.compile.naming import (
     pythonize_field_name,
     pythonize_method_name,
 )
-from betterproto2_compiler.known_types import KNOWN_METHODS
+from betterproto2_compiler.known_types import KNOWN_METHODS, WRAPPED_TYPES
 from betterproto2_compiler.lib.google.protobuf import (
     DescriptorProto,
     EnumDescriptorProto,
@@ -318,8 +316,15 @@ class FieldCompiler(ProtoContentBase):
     @property
     def betterproto_field_args(self) -> list[str]:
         args = []
-        if self.field_wraps:
-            args.append(f"wraps={self.field_wraps}")
+
+        if self.proto_obj.type == FieldDescriptorProtoType.TYPE_MESSAGE:
+            type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
+
+            if (type_package, type_name) in WRAPPED_TYPES:
+                # Without the lambda function, the type is evaluated right away, which fails since the corresponding
+                # import is placed at the end of the file to avoid circular imports.
+                args.append(f"wrap=lambda: {self.py_type}")
+
         if self.optional:
             args.append("optional=True")
         elif self.repeated:
@@ -337,16 +342,6 @@ class FieldCompiler(ProtoContentBase):
         return self.py_type in self.message.builtins_types or (
             self.py_type == self.py_name and self.py_name in dir(builtins)
         )
-
-    @property
-    def field_wraps(self) -> str | None:
-        """Returns betterproto wrapped field type or None."""
-        match_wrapper = re.match(r"\.google\.protobuf\.(.+)Value$", self.proto_obj.type_name)
-        if match_wrapper:
-            wrapped_type = "TYPE_" + match_wrapper.group(1).upper()
-            if hasattr(betterproto2, wrapped_type):
-                return f"betterproto2.{wrapped_type}"
-        return None
 
     @property
     def repeated(self) -> bool:
@@ -405,6 +400,14 @@ class FieldCompiler(ProtoContentBase):
     @property
     def annotation(self) -> str:
         py_type = self.py_type
+
+        # Replace by the wrapping type if needed
+        if self.proto_obj.type == FieldDescriptorProtoType.TYPE_MESSAGE:
+            type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
+
+            if wrapped_type := WRAPPED_TYPES.get((type_package, type_name)):
+                py_type = wrapped_type
+
         if self.use_builtins:
             py_type = f"builtins.{py_type}"
         if self.repeated:
