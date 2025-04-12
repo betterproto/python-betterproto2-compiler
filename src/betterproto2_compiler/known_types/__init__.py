@@ -10,7 +10,13 @@ from .timestamp import Timestamp
 # to the template file: they will automatically be removed if not necessary.
 KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
     ("google.protobuf", "Any"): [Any.pack, Any.unpack, Any.to_dict],
-    ("google.protobuf", "Timestamp"): [Timestamp.from_datetime, Timestamp.to_datetime, Timestamp.timestamp_to_json],
+    ("google.protobuf", "Timestamp"): [
+        Timestamp.from_datetime,
+        Timestamp.to_datetime,
+        Timestamp.timestamp_to_json,
+        Timestamp.from_dict,
+        Timestamp.to_wrapped,
+    ],
     ("google.protobuf", "Duration"): [Duration.from_timedelta, Duration.to_timedelta, Duration.delta_to_json],
     ("google.protobuf", "BoolValue"): [BoolValue.from_wrapped, BoolValue.to_wrapped],
     ("google.protobuf", "StringValue"): [StringValue.from_wrapped, StringValue.to_wrapped],
@@ -20,4 +26,6 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
 WRAPPED_TYPES: dict[tuple[str, str], str] = {
     ("google.protobuf", "BoolValue"): "bool",
     ("google.protobuf", "StringValue"): "str",
+    ("google.protobuf", "Timestamp"): "datetime.datetime",
+    ("google.protobuf", "Duration"): "datetime.timedelta",
 }

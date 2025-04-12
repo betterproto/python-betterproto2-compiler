@@ -317,13 +317,23 @@ class FieldCompiler(ProtoContentBase):
     def betterproto_field_args(self) -> list[str]:
         args = []
 
-        if self.proto_obj.type == FieldDescriptorProtoType.TYPE_MESSAGE:
+        if self.field_type == FieldDescriptorProtoType.TYPE_MESSAGE:
             type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
 
             if (type_package, type_name) in WRAPPED_TYPES:
+                unwrap_type = get_type_reference(
+                    package=self.output_file.package,
+                    imports=self.output_file.imports_end,
+                    source_type=self.proto_obj.type_name,
+                    request=self.output_file.parent_request,
+                    settings=self.output_file.settings,
+                    unwrap=False,
+                )
+
                 # Without the lambda function, the type is evaluated right away, which fails since the corresponding
                 # import is placed at the end of the file to avoid circular imports.
                 args.append(f"wrap=lambda: {self.py_type}")
+                args.append(f"unwrap=lambda: {unwrap_type}")
 
         if self.optional:
             args.append("optional=True")

@@ -1,5 +1,7 @@
 import datetime
 
+import dateutil.parser
+
 from betterproto2_compiler.lib.google.protobuf import Timestamp as VanillaTimestamp
 
 
@@ -43,3 +45,16 @@ class Timestamp(VanillaTimestamp):
             return f"{result}.{int(nanos // 1e3):06d}Z"
         # Serialize 9 fractional digits.
         return f"{result}.{nanos:09d}"
+
+    # TODO typing
+    @classmethod
+    def from_dict(cls, value):
+        if isinstance(value, str):
+            dt = dateutil.parser.isoparse(value)
+            dt = dt.astimezone(datetime.timezone.utc)
+            return Timestamp.from_datetime(dt)
+
+        return super().from_dict(value)
+
+    def to_wrapped(self) -> datetime.datetime:
+        return self.to_datetime()

@@ -80,7 +80,7 @@ def get_type_reference(
     Return a Python type name for a proto type reference. Adds the import if
     necessary. Unwraps well known type if required.
     """
-    if unwrap:
+    if unwrap:  # TODO don't hardcode
         if source_type == ".google.protobuf.Duration":
             return "datetime.timedelta"
 
