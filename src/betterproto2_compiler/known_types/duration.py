@@ -48,7 +48,7 @@ class Duration(VanillaDuration):
         casing: betterproto2.Casing = betterproto2.Casing.CAMEL,
         include_default_values: bool = False,
     ) -> dict[str, typing.Any] | typing.Any:
-        # If the output format is PYTHON, we should have kept the wraped type without building the real class
+        # If the output format is PYTHON, we should have kept the wrapped type without building the real class
         assert output_format == betterproto2.OutputFormat.PROTO_JSON
 
         assert 0 <= self.nanos < 1e9
