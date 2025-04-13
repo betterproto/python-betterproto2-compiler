@@ -2,7 +2,17 @@ from collections.abc import Callable
 
 from .any import Any
 from .duration import Duration
-from .google_values import BoolValue, StringValue
+from .google_values import (
+    BoolValue,
+    BytesValue,
+    DoubleValue,
+    FloatValue,
+    Int32Value,
+    Int64Value,
+    StringValue,
+    UInt32Value,
+    UInt64Value,
+)
 from .timestamp import Timestamp
 
 # For each (package, message name), lists the methods that should be added to the message definition.
@@ -28,8 +38,60 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
         Duration.from_wrapped,
         Duration.to_wrapped,
     ],
-    ("google.protobuf", "BoolValue"): [BoolValue.from_wrapped, BoolValue.to_wrapped],
-    ("google.protobuf", "StringValue"): [StringValue.from_wrapped, StringValue.to_wrapped],
+    ("google.protobuf", "BoolValue"): [
+        BoolValue.from_dict,
+        BoolValue.to_dict,
+        BoolValue.from_wrapped,
+        BoolValue.to_wrapped,
+    ],
+    ("google.protobuf", "Int32Value"): [
+        Int32Value.from_dict,
+        Int32Value.to_dict,
+        Int32Value.from_wrapped,
+        Int32Value.to_wrapped,
+    ],
+    ("google.protobuf", "Int64Value"): [
+        Int64Value.from_dict,
+        Int64Value.to_dict,
+        Int64Value.from_wrapped,
+        Int64Value.to_wrapped,
+    ],
+    ("google.protobuf", "UInt32Value"): [
+        UInt32Value.from_dict,
+        UInt32Value.to_dict,
+        UInt32Value.from_wrapped,
+        UInt32Value.to_wrapped,
+    ],
+    ("google.protobuf", "UInt64Value"): [
+        UInt64Value.from_dict,
+        UInt64Value.to_dict,
+        UInt64Value.from_wrapped,
+        UInt64Value.to_wrapped,
+    ],
+    ("google.protobuf", "FloatValue"): [
+        FloatValue.from_dict,
+        FloatValue.to_dict,
+        FloatValue.from_wrapped,
+        FloatValue.to_wrapped,
+    ],
+    ("google.protobuf", "DoubleValue"): [
+        DoubleValue.from_dict,
+        DoubleValue.to_dict,
+        DoubleValue.from_wrapped,
+        DoubleValue.to_wrapped,
+    ],
+    ("google.protobuf", "StringValue"): [
+        StringValue.from_dict,
+        StringValue.to_dict,
+        StringValue.from_wrapped,
+        StringValue.to_wrapped,
+    ],
+    ("google.protobuf", "BytesValue"): [
+        BytesValue.from_dict,
+        BytesValue.to_dict,
+        BytesValue.from_wrapped,
+        BytesValue.to_wrapped,
+    ],
 }
 
 # A wrapped type is the type of a message that is automatically replaced by a known Python type.
