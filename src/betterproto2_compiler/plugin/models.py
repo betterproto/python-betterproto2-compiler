@@ -410,13 +410,6 @@ class FieldCompiler(ProtoContentBase):
     def annotation(self) -> str:
         py_type = self.py_type
 
-        # Replace by the wrapping type if needed
-        if self.proto_obj.type == FieldDescriptorProtoType.TYPE_MESSAGE:
-            type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
-
-            if wrapped_type := WRAPPED_TYPES.get((type_package, type_name)):
-                py_type = wrapped_type
-
         if self.use_builtins:
             py_type = f"builtins.{py_type}"
         if self.repeated:
