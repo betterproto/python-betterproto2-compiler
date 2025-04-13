@@ -18,8 +18,10 @@ __all__ = (
     {%- endfor -%}
 )
 
+import re
 import builtins
 import datetime
+import dateutil.parser
 import warnings
 from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 import typing

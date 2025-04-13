@@ -5,7 +5,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from betterproto2_compiler.lib.google import protobuf as google_protobuf
+from betterproto2_compiler.known_types import WRAPPED_TYPES
 from betterproto2_compiler.settings import Settings
 
 from ..casing import safe_snake_case
@@ -13,18 +13,6 @@ from .naming import pythonize_class_name
 
 if TYPE_CHECKING:
     from ..plugin.models import PluginRequestCompiler
-
-WRAPPER_TYPES: dict[str, type] = {
-    ".google.protobuf.DoubleValue": google_protobuf.DoubleValue,
-    ".google.protobuf.FloatValue": google_protobuf.FloatValue,
-    ".google.protobuf.Int32Value": google_protobuf.Int32Value,
-    ".google.protobuf.Int64Value": google_protobuf.Int64Value,
-    ".google.protobuf.UInt32Value": google_protobuf.UInt32Value,
-    ".google.protobuf.UInt64Value": google_protobuf.UInt64Value,
-    ".google.protobuf.BoolValue": google_protobuf.BoolValue,
-    ".google.protobuf.StringValue": google_protobuf.StringValue,
-    ".google.protobuf.BytesValue": google_protobuf.BytesValue,
-}
 
 
 def parse_source_type_name(field_type_name: str, request: PluginRequestCompiler) -> tuple[str, str]:
@@ -73,25 +61,17 @@ def get_type_reference(
     imports: set,
     source_type: str,
     request: PluginRequestCompiler,
-    unwrap: bool = True,
+    wrap: bool = True,
     settings: Settings,
 ) -> str:
     """
     Return a Python type name for a proto type reference. Adds the import if
     necessary. Unwraps well known type if required.
     """
-    if unwrap:
-        if source_type in WRAPPER_TYPES:
-            wrapped_type = type(WRAPPER_TYPES[source_type]().value)
-            return f"{wrapped_type.__name__} | None"
-
-        if source_type == ".google.protobuf.Duration":
-            return "datetime.timedelta"
-
-        elif source_type == ".google.protobuf.Timestamp":
-            return "datetime.datetime"
-
     source_package, source_type = parse_source_type_name(source_type, request)
+
+    if wrap and (source_package, source_type) in WRAPPED_TYPES:
+        return WRAPPED_TYPES[(source_package, source_type)]
 
     current_package: list[str] = package.split(".") if package else []
     py_package: list[str] = source_package.split(".") if source_package else []
