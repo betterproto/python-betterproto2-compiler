@@ -332,7 +332,6 @@ class FieldCompiler(ProtoContentBase):
 
                 # Without the lambda function, the type is evaluated right away, which fails since the corresponding
                 # import is placed at the end of the file to avoid circular imports.
-                args.append(f"wrap=lambda: {self.py_type}")
                 args.append(f"unwrap=lambda: {unwrap_type}")
 
         if self.optional:
