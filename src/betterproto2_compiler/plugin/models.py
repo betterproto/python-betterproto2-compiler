@@ -327,7 +327,7 @@ class FieldCompiler(ProtoContentBase):
                     source_type=self.proto_obj.type_name,
                     request=self.output_file.parent_request,
                     settings=self.output_file.settings,
-                    unwrap=False,
+                    wrap=False,
                 )
 
                 # Without the lambda function, the type is evaluated right away, which fails since the corresponding
@@ -593,7 +593,7 @@ class ServiceMethodCompiler(ProtoContentBase):
             imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.input_type,
             request=self.parent.output_file.parent_request,
-            unwrap=False,
+            wrap=False,
             settings=self.parent.output_file.settings,
         )
 
@@ -620,7 +620,7 @@ class ServiceMethodCompiler(ProtoContentBase):
             imports=self.parent.output_file.imports_end,
             source_type=self.proto_obj.output_type,
             request=self.parent.output_file.parent_request,
-            unwrap=False,
+            wrap=False,
             settings=self.parent.output_file.settings,
         )
 

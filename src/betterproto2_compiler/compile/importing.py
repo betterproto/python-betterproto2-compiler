@@ -61,7 +61,7 @@ def get_type_reference(
     imports: set,
     source_type: str,
     request: PluginRequestCompiler,
-    unwrap: bool = True,
+    wrap: bool = True,
     settings: Settings,
 ) -> str:
     """
@@ -70,7 +70,7 @@ def get_type_reference(
     """
     source_package, source_type = parse_source_type_name(source_type, request)
 
-    if unwrap and (source_package, source_type) in WRAPPED_TYPES:
+    if wrap and (source_package, source_type) in WRAPPED_TYPES:
         return WRAPPED_TYPES[(source_package, source_type)]
 
     current_package: list[str] = package.split(".") if package else []
