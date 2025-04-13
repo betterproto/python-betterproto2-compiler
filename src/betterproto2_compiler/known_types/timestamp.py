@@ -71,7 +71,6 @@ class Timestamp(VanillaTimestamp):
         casing: betterproto2.Casing = betterproto2.Casing.CAMEL,
         include_default_values: bool = False,
     ) -> dict[str, typing.Any] | typing.Any:
-        print("ok")
         # If the output format is PYTHON, we should have kept the wraped type without building the real class
         assert output_format == betterproto2.OutputFormat.PROTO_JSON
 

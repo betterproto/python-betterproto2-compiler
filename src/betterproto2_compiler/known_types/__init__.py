@@ -19,7 +19,15 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
         Timestamp.from_wrapped,
         Timestamp.to_wrapped,
     ],
-    ("google.protobuf", "Duration"): [Duration.from_timedelta, Duration.to_timedelta, Duration.delta_to_json],
+    ("google.protobuf", "Duration"): [
+        Duration.from_timedelta,
+        Duration.to_timedelta,
+        Duration.delta_to_json,
+        Duration.from_dict,
+        Duration.to_dict,
+        Duration.from_wrapped,
+        Duration.to_wrapped,
+    ],
     ("google.protobuf", "BoolValue"): [BoolValue.from_wrapped, BoolValue.to_wrapped],
     ("google.protobuf", "StringValue"): [StringValue.from_wrapped, StringValue.to_wrapped],
 }
