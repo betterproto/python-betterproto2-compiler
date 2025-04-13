@@ -1,5 +1,7 @@
 import datetime
+import typing
 
+import betterproto2
 import dateutil.parser
 
 from betterproto2_compiler.lib.google.protobuf import Timestamp as VanillaTimestamp
@@ -8,6 +10,11 @@ from betterproto2_compiler.lib.google.protobuf import Timestamp as VanillaTimest
 class Timestamp(VanillaTimestamp):
     @classmethod
     def from_datetime(cls, dt: datetime.datetime) -> "Timestamp":
+        if not dt.tzinfo:
+            raise ValueError("datetime must be timezone aware")
+
+        dt = dt.astimezone(datetime.timezone.utc)
+
         # manual epoch offset calulation to avoid rounding errors,
         # to support negative timestamps (before 1970) and skirt
         # around datetime bugs (apparently 0 isn't a year in [0, 9999]??)
@@ -55,6 +62,24 @@ class Timestamp(VanillaTimestamp):
             return Timestamp.from_datetime(dt)
 
         return super().from_dict(value)
+
+    # TODO typing
+    def to_dict(
+        self,
+        *,
+        output_format: betterproto2.OutputFormat = betterproto2.OutputFormat.PROTO_JSON,
+        casing: betterproto2.Casing = betterproto2.Casing.CAMEL,
+        include_default_values: bool = False,
+    ) -> dict[str, typing.Any] | typing.Any:
+        print("ok")
+        # If the output format is PYTHON, we should have kept the wraped type without building the real class
+        assert output_format == betterproto2.OutputFormat.PROTO_JSON
+
+        return Timestamp.timestamp_to_json(self.to_datetime())
+
+    @staticmethod
+    def from_wrapped(wrapped: datetime.datetime) -> "Timestamp":
+        return Timestamp.from_datetime(wrapped)
 
     def to_wrapped(self) -> datetime.datetime:
         return self.to_datetime()

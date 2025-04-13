@@ -15,6 +15,8 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
         Timestamp.to_datetime,
         Timestamp.timestamp_to_json,
         Timestamp.from_dict,
+        Timestamp.to_dict,
+        Timestamp.from_wrapped,
         Timestamp.to_wrapped,
     ],
     ("google.protobuf", "Duration"): [Duration.from_timedelta, Duration.to_timedelta, Duration.delta_to_json],
