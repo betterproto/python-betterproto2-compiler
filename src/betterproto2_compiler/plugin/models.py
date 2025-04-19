@@ -317,22 +317,12 @@ class FieldCompiler(ProtoContentBase):
     def betterproto_field_args(self) -> list[str]:
         args = []
 
-        if self.field_type == FieldDescriptorProtoType.TYPE_MESSAGE:
-            type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
+        if self.field_type == FieldDescriptorProtoType.TYPE_MESSAGE and self.is_wrapped:
+            unwrap_type = self.unwrapped_py_type
 
-            if (type_package, type_name) in WRAPPED_TYPES:
-                unwrap_type = get_type_reference(
-                    package=self.output_file.package,
-                    imports=self.output_file.imports_end,
-                    source_type=self.proto_obj.type_name,
-                    request=self.output_file.parent_request,
-                    settings=self.output_file.settings,
-                    wrap=False,
-                )
-
-                # Without the lambda function, the type is evaluated right away, which fails since the corresponding
-                # import is placed at the end of the file to avoid circular imports.
-                args.append(f"unwrap=lambda: {unwrap_type}")
+            # Without the lambda function, the type is evaluated right away, which fails since the corresponding
+            # import is placed at the end of the file to avoid circular imports.
+            args.append(f"unwrap=lambda: {unwrap_type}")
 
         if self.optional:
             args.append("optional=True")
@@ -382,7 +372,12 @@ class FieldCompiler(ProtoContentBase):
         return self.proto_obj.name
 
     @property
-    def py_type(self) -> str:
+    def is_wrapped(self) -> bool:
+        type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
+
+        return (type_package, type_name) in WRAPPED_TYPES
+
+    def _py_type(self, wrap: bool) -> str:
         """String representation of Python type."""
         if self.proto_obj.type in PROTO_FLOAT_TYPES:
             return "float"
@@ -401,10 +396,19 @@ class FieldCompiler(ProtoContentBase):
                 imports=self.output_file.imports_end,
                 source_type=self.proto_obj.type_name,
                 request=self.output_file.parent_request,
+                wrap=wrap,
                 settings=self.output_file.settings,
             )
         else:
             raise NotImplementedError(f"Unknown type {self.proto_obj.type}")
+
+    @property
+    def py_type(self) -> str:
+        return self._py_type(wrap=True)
+
+    @property
+    def unwrapped_py_type(self) -> str:
+        return self._py_type(wrap=False)
 
     @property
     def annotation(self) -> str:
