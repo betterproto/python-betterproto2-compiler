@@ -373,6 +373,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def is_wrapped(self) -> bool:
+        assert self.field_type == FieldDescriptorProtoType.TYPE_MESSAGE
         type_package, type_name = parse_source_type_name(self.proto_obj.type_name, self.output_file.parent_request)
 
         return (type_package, type_name) in WRAPPED_TYPES
@@ -441,6 +442,8 @@ class OneOfFieldCompiler(FieldCompiler):
 class MapEntryCompiler(FieldCompiler):
     py_k_type: str = ""
     py_v_type: str = ""
+    unwrap_v: str | None = None
+
     proto_k_type: str = ""
     proto_v_type: str = ""
 
@@ -450,18 +453,30 @@ class MapEntryCompiler(FieldCompiler):
         for nested in self.message.proto_obj.nested_type:
             if nested.name.replace("_", "").lower() == map_entry and unwrap(nested.options).map_entry:
                 # Get Python types
+                assert nested.field[0].name == "key"
                 self.py_k_type = FieldCompiler(
                     source_file=self.source_file,
                     proto_obj=nested.field[0],  # key
                     path=[],
                     message=self.message,
                 ).py_type
-                self.py_v_type = FieldCompiler(
+
+                assert nested.field[1].name == "value"
+                value_field_compiler = FieldCompiler(
                     source_file=self.source_file,
                     proto_obj=nested.field[1],  # value
                     path=[],
                     message=self.message,
-                ).py_type
+                )
+
+                self.py_v_type = value_field_compiler.py_type
+                if (
+                    value_field_compiler.field_type == FieldDescriptorProtoType.TYPE_MESSAGE
+                    and value_field_compiler.is_wrapped
+                ):
+                    self.unwrap_v = value_field_compiler.unwrapped_py_type
+                else:
+                    self.unwrap_v = None
 
                 # Get proto types
                 self.proto_k_type = unwrap(FieldDescriptorProtoType(nested.field[0].type).name)
@@ -472,11 +487,19 @@ class MapEntryCompiler(FieldCompiler):
 
     def get_field_string(self) -> str:
         """Construct string representation of this field as a field."""
+        proto_type_1 = f"betterproto2.{self.proto_k_type}"
+        proto_type_2 = f"betterproto2.{self.proto_v_type}"
+
+        unwrap_2 = ""
+        if self.unwrap_v:
+            unwrap_2 = f", unwrap_2=lambda: {self.unwrap_v}"
+
         betterproto_field_type = (
-            f"betterproto2.field({self.proto_obj.number}, "
+            "betterproto2.field("
+            f"{self.proto_obj.number}, "
             "betterproto2.TYPE_MAP, "
-            f"map_types=(betterproto2.{self.proto_k_type}, "
-            f"betterproto2.{self.proto_v_type}))"
+            f"map_meta=betterproto2.map_meta({proto_type_1}, {proto_type_2}{unwrap_2})"
+            ")"
         )
         if self.py_name in dir(builtins):
             self.message.builtins_types.add(self.py_name)
