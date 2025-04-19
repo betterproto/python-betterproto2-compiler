@@ -97,7 +97,14 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
 # A wrapped type is the type of a message that is automatically replaced by a known Python type.
 WRAPPED_TYPES: dict[tuple[str, str], str] = {
     ("google.protobuf", "BoolValue"): "bool",
+    ("google.protobuf", "Int32Value"): "int",
+    ("google.protobuf", "Int64Value"): "int",
+    ("google.protobuf", "UInt32Value"): "int",
+    ("google.protobuf", "UInt64Value"): "int",
+    ("google.protobuf", "FloatValue"): "float",
+    ("google.protobuf", "DoubleValue"): "float",
     ("google.protobuf", "StringValue"): "str",
+    ("google.protobuf", "BytesValue"): "bytes",
     ("google.protobuf", "Timestamp"): "datetime.datetime",
     ("google.protobuf", "Duration"): "datetime.timedelta",
 }

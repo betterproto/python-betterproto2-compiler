@@ -28,6 +28,7 @@ packages = [
 python = "^3.10"
 betterproto2 = { version = "^0.4.0", extras = ["grpclib"] }
 # betterproto2 = { git="https://github.com/betterproto/python-betterproto2" }
+# betterproto2 = { path = "../python-betterproto2", extras = ["grpclib"] }
 # The Ruff version is pinned. To update it, also update it in .pre-commit-config.yaml
 ruff = "~0.9.3"
 jinja2 = ">=3.0.3"
