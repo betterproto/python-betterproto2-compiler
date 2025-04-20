@@ -65,14 +65,14 @@ extras = ["regex"]
 
 [[package]]
 name = "betterproto2"
-version = "0.4.0"
+version = "0.5.0"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "betterproto2-0.4.0-py3-none-any.whl", hash = "sha256:04eeed60f4ce72a90dc5610babb3c49435fcf215bf1e70f0bffb3cd0be7b5aa8"},
-    {file = "betterproto2-0.4.0.tar.gz", hash = "sha256:718cde8c5bac5c42b60759ab303f8c1986eb87a8d466c7c3218b1b1f7c3adaf7"},
+    {file = "betterproto2-0.5.0-py3-none-any.whl", hash = "sha256:c21c6317e8cefa57673ace0db8d366c91d5a125eedad506c5db0d6981d53e7cf"},
+    {file = "betterproto2-0.5.0.tar.gz", hash = "sha256:6ebee01b0ef173b0f05198d3b1b6993f4f8ad6700b042074fe18c9b4b220e957"},
 ]
 
 [package.dependencies]
@@ -2143,4 +2143,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "c76544bdb9d312c2ae668262e53ed5ce105077aa0df129bfa2befa0b17f1264a"
+content-hash = "e5a1080a322a8a9b9e6034f4e849b62250b4ce9ddc7d478247997d2183307d61"
