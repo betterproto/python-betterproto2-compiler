@@ -20,17 +20,17 @@ class ClientGeneration(StrEnum):
     SYNC_ASYNC = "sync_async"
     """Both synchronous and asynchronous clients are generated.
 
-    The asynchronous client is generated with the Async suffix."""
+    Asynchronous clients are generated with the Async suffix."""
 
     ASYNC_SYNC = "async_sync"
     """Both synchronous and asynchronous clients are generated.
 
-    The synchronous client is generated with the Sync suffix."""
+    Synchronous clients are generated with the Sync suffix."""
 
     SYNC_ASYNC_NO_DEFAULT = "sync_async_no_default"
     """Both synchronous and asynchronous clients are generated.
 
-    The synchronous client is generated with the Sync suffix, and the asynchronous client is generated with the Async
+    Synchronous clients are generated with the Sync suffix, and asynchronous clients are generated with the Async
     suffix."""
 
     @property
@@ -60,8 +60,14 @@ class ClientGeneration(StrEnum):
         return self in {ClientGeneration.SYNC_ASYNC, ClientGeneration.SYNC_ASYNC_NO_DEFAULT}
 
 
+class ServerGeneration(StrEnum):
+    NONE = "none"
+    ASYNC = "async"
+
+
 @dataclass
 class Settings:
     pydantic_dataclasses: bool
 
     client_generation: ClientGeneration
+    server_generation: ServerGeneration

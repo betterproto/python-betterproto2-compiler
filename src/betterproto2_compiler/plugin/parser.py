@@ -14,7 +14,7 @@ from betterproto2_compiler.lib.google.protobuf.compiler import (
     CodeGeneratorResponseFeature,
     CodeGeneratorResponseFile,
 )
-from betterproto2_compiler.settings import ClientGeneration, Settings
+from betterproto2_compiler.settings import ClientGeneration, ServerGeneration, Settings
 
 from .compiler import outputfile_compiler
 from .models import (
@@ -62,22 +62,27 @@ def traverse(
 def get_settings(plugin_options: list[str]) -> Settings:
     # Synchronous clients are suitable for most users
     client_generation = ClientGeneration.SYNC
+    server_generation = ServerGeneration.NONE
 
     for opt in plugin_options:
         if opt.startswith("client_generation="):
             name = opt.split("=")[1]
-
-            # print(ClientGeneration.__members__, file=sys.stderr)
-            # print([member.value for member in ClientGeneration])
-
             try:
                 client_generation = ClientGeneration(name)
             except ValueError:
                 raise ValueError(f"Invalid client_generation option: {name}")
 
+        if opt.startswith("server_generation="):
+            name = opt.split("=")[1]
+            try:
+                server_generation = ServerGeneration(name)
+            except ValueError:
+                raise ValueError(f"Invalid server_generation option: {name}")
+
     return Settings(
         pydantic_dataclasses="pydantic_dataclasses" in plugin_options,
         client_generation=client_generation,
+        server_generation=server_generation,
     )
 
 
