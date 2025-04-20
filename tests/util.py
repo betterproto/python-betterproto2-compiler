@@ -27,12 +27,7 @@ def get_directories(path):
         yield from directories
 
 
-async def protoc(
-    path: str | Path,
-    output_dir: str | Path,
-    reference: bool = False,
-    pydantic_dataclasses: bool = False,
-):
+async def protoc(path: str | Path, output_dir: str | Path, reference: bool = False, pydantic_dataclasses: bool = False):
     path: Path = Path(path).resolve()
     output_dir: Path = Path(output_dir).resolve()
     python_out_option: str = "python_betterproto2_out" if not reference else "python_out"
