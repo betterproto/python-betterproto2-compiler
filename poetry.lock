@@ -65,14 +65,14 @@ extras = ["regex"]
 
 [[package]]
 name = "betterproto2"
-version = "0.5.0"
+version = "0.5.1"
 description = "A better Protobuf / gRPC generator & library"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "betterproto2-0.5.0-py3-none-any.whl", hash = "sha256:c21c6317e8cefa57673ace0db8d366c91d5a125eedad506c5db0d6981d53e7cf"},
-    {file = "betterproto2-0.5.0.tar.gz", hash = "sha256:6ebee01b0ef173b0f05198d3b1b6993f4f8ad6700b042074fe18c9b4b220e957"},
+    {file = "betterproto2-0.5.1-py3-none-any.whl", hash = "sha256:7e099f9f5cdf8b6918f5e074868bf113a35a3f41e8448664b2a70ea1fa265401"},
+    {file = "betterproto2-0.5.1.tar.gz", hash = "sha256:fa3be36a10115d12c67d681a5273ffaf269626da84aeba27f472817f98facdb4"},
 ]
 
 [package.dependencies]
@@ -670,14 +670,14 @@ files = [
 
 [[package]]
 name = "identify"
-version = "2.6.9"
+version = "2.6.10"
 description = "File identification library for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "identify-2.6.9-py2.py3-none-any.whl", hash = "sha256:c98b4322da415a8e5a70ff6e51fbc2d2932c015532d77e9f8537b4ba7813b150"},
-    {file = "identify-2.6.9.tar.gz", hash = "sha256:d40dfe3142a1421d8518e3d3985ef5ac42890683e32306ad614a29490abeb6bf"},
+    {file = "identify-2.6.10-py2.py3-none-any.whl", hash = "sha256:5f34248f54136beed1a7ba6a6b5c4b6cf21ff495aac7c359e1ef831ae3b8ab25"},
+    {file = "identify-2.6.10.tar.gz", hash = "sha256:45e92fd704f3da71cc3880036633f48b4b7265fd4de2b57627cb157216eb7eb8"},
 ]
 
 [package.extras]
@@ -1274,14 +1274,14 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "24.2"
+version = "25.0"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev", "test"]
 files = [
-    {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
-    {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
+    {file = "packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484"},
+    {file = "packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"},
 ]
 
 [[package]]
@@ -1885,14 +1885,14 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "78.1.0"
+version = "79.0.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "setuptools-78.1.0-py3-none-any.whl", hash = "sha256:3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8"},
-    {file = "setuptools-78.1.0.tar.gz", hash = "sha256:18fd474d4a82a5f83dac888df697af65afa82dec7323d09c3e37d1f14288da54"},
+    {file = "setuptools-79.0.0-py3-none-any.whl", hash = "sha256:b9ab3a104bedb292323f53797b00864e10e434a3ab3906813a7169e4745b912a"},
+    {file = "setuptools-79.0.0.tar.gz", hash = "sha256:9828422e7541213b0aacb6e10bbf9dd8febeaa45a48570e09b6d100e063fc9f9"},
 ]
 
 [package.extras]
@@ -2143,4 +2143,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "e5a1080a322a8a9b9e6034f4e849b62250b4ce9ddc7d478247997d2183307d61"
+content-hash = "940984891e2a7cc5cab345eed186a977f5cd815c6d1b0c203272e5e7cd3e28a6"
