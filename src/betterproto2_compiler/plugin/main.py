@@ -15,8 +15,7 @@ def main() -> None:
     data = sys.stdin.buffer.read()
 
     # Parse request
-    request = CodeGeneratorRequest()
-    request.parse(data)
+    request = CodeGeneratorRequest.parse(data)
 
     dump_file = os.getenv("BETTERPROTO_DUMP")
     if dump_file:

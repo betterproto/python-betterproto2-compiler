@@ -37,7 +37,7 @@ class Any(VanillaAny):
         except KeyError:
             raise TypeError(f"Can't unpack unregistered type: {self.type_url}")
 
-        return message_type().parse(self.value)
+        return message_type.parse(self.value)
 
     def to_dict(self, **kwargs) -> dict[str, typing.Any]:
         # TODO allow passing a message pool to `to_dict`
