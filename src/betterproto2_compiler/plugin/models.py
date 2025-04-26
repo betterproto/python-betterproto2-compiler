@@ -353,8 +353,7 @@ class FieldCompiler(ProtoContentBase):
 
     @property
     def field_type(self) -> FieldType:
-        # TODO it should be possible to remove constructor
-        return FieldType(self.proto_obj.type)
+        return self.proto_obj.type
 
     @property
     def packed(self) -> bool:
