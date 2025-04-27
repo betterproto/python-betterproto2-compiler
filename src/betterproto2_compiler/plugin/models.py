@@ -411,8 +411,41 @@ class FieldCompiler(ProtoContentBase):
         return self._py_type(wrap=False)
 
     @property
+    def annotations(self) -> list[str]:
+        """List of the Pydantic annotation to add to the field."""
+        assert self.output_file.settings.pydantic_dataclasses
+
+        annotations = []
+
+        if self.proto_obj.type in (FieldType.TYPE_INT32, FieldType.TYPE_SFIXED32, FieldType.TYPE_SINT32):
+            annotations.append("pydantic.Field(ge=-2**31, le=2**31 - 1)")
+
+        elif self.proto_obj.type in (FieldType.TYPE_UINT32, FieldType.TYPE_FIXED32):
+            annotations.append("pydantic.Field(ge=0, le=2**32 - 1)")
+
+        elif self.proto_obj.type in (FieldType.TYPE_INT64, FieldType.TYPE_SFIXED64, FieldType.TYPE_SINT64):
+            annotations.append("pydantic.Field(ge=-2**63, le=2**63 - 1)")
+
+        elif self.proto_obj.type in (FieldType.TYPE_UINT64, FieldType.TYPE_FIXED64):
+            annotations.append("pydantic.Field(ge=0, le=2**64 - 1)")
+
+        elif self.proto_obj.type == FieldType.TYPE_FLOAT:
+            annotations.append("pydantic.AfterValidator(betterproto2.validators.validate_float32)")
+
+        elif self.proto_obj.type == FieldType.TYPE_STRING:
+            annotations.append("pydantic.AfterValidator(betterproto2.validators.validate_string)")
+
+        return annotations
+
+    @property
     def annotation(self) -> str:
         py_type = self.py_type
+
+        # Add the pydantic annotation if needed
+        if self.output_file.settings.pydantic_dataclasses:
+            annotations = self.annotations
+            if annotations:
+                py_type = f"typing.Annotated[{py_type}, {', '.join(annotations)}]"
 
         if self.use_builtins:
             py_type = f"builtins.{py_type}"

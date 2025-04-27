@@ -28,6 +28,7 @@ import typing
 from typing import TYPE_CHECKING
 
 {% if output_file.settings.pydantic_dataclasses %}
+import pydantic
 from pydantic.dataclasses import dataclass
 from pydantic import model_validator
 {%- else -%}
