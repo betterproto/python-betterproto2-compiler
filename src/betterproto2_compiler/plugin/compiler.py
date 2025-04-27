@@ -51,9 +51,9 @@ def outputfile_compiler(output_file: OutputTemplate) -> str:
     code = header_template.render(output_file=output_file, version=version, all=all) + "\n" + code
 
     try:
-        # Sort imports, delete unused ones
+        # Sort imports, delete unused ones, sort __all__
         code = subprocess.check_output(
-            ["ruff", "check", "--select", "I,F401,TCH005", "--fix", "--silent", "-"],
+            ["ruff", "check", "--select", "I,F401,TC005,RUF022", "--fix", "--silent", "-"],
             input=code,
             encoding="utf-8",
         )
