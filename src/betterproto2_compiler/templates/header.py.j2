@@ -5,7 +5,7 @@
 # plugin: python-betterproto2
 # This file has been @generated
 
-__all__ = (
+{# __all__ = (
     {% for _, enum in output_file.enums|dictsort(by="key") %}
         "{{ enum.py_name }}",
     {%- endfor -%}
@@ -15,6 +15,12 @@ __all__ = (
     {% for _, service in output_file.services|dictsort(by="key") %}
         "{{ service.py_name }}Stub",
         "{{ service.py_name }}Base",
+    {%- endfor -%}
+) #}
+
+__all__ = (
+    {%- for name in all -%}
+    "{{ name }}",
     {%- endfor -%}
 )
 
