@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-from collections.abc import Generator
 from pathlib import Path
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
@@ -11,12 +10,6 @@ inputs_path = root_path.joinpath("inputs")
 output_path_reference = root_path.joinpath("output_reference")
 output_path_betterproto = root_path.joinpath("output_betterproto")
 output_path_betterproto_pydantic = root_path.joinpath("output_betterproto_pydantic")
-
-
-def get_files(path, suffix: str) -> Generator[str, None, None]:
-    for r, dirs, files in os.walk(path):
-        for filename in [f for f in files if f.endswith(suffix)]:
-            yield os.path.join(r, filename)
 
 
 def get_directories(path):
