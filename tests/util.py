@@ -1,9 +1,6 @@
 import asyncio
-import atexit
 import os
-import platform
 import sys
-import tempfile
 from collections.abc import Generator
 from pathlib import Path
 
@@ -30,53 +27,23 @@ def get_directories(path):
 async def protoc(path: str | Path, output_dir: str | Path, reference: bool = False, pydantic_dataclasses: bool = False):
     path: Path = Path(path).resolve()
     output_dir: Path = Path(output_dir).resolve()
-    python_out_option: str = "python_betterproto2_out" if not reference else "python_out"
+    python_out_option: str = "python_out" if reference else "python_betterproto2_out"
 
-    if pydantic_dataclasses:
-        plugin_path = Path("src/betterproto2_compiler/plugin/main.py")
+    command = [
+        sys.executable,
+        "-m",
+        "grpc.tools.protoc",
+        f"--proto_path={path.as_posix()}",
+        f"--{python_out_option}={output_dir.as_posix()}",
+        *[p.as_posix() for p in path.glob("*.proto")],
+    ]
 
-        if "Win" in platform.system():
-            with tempfile.NamedTemporaryFile("w", encoding="UTF-8", suffix=".bat", delete=False) as tf:
-                # See https://stackoverflow.com/a/42622705
-                tf.writelines(
-                    [
-                        "@echo off",
-                        f"\nchdir {os.getcwd()}",
-                        f"\n{sys.executable} -u {plugin_path.as_posix()}",
-                    ],
-                )
+    if not reference:
+        command.insert(3, "--python_betterproto2_opt=server_generation=async")
+        command.insert(3, "--python_betterproto2_opt=client_generation=async_sync")
 
-                tf.flush()
-
-                plugin_path = Path(tf.name)
-                atexit.register(os.remove, plugin_path)
-
-        command = [
-            sys.executable,
-            "-m",
-            "grpc.tools.protoc",
-            f"--plugin=protoc-gen-custom={plugin_path.as_posix()}",
-            "--experimental_allow_proto3_optional",
-            "--custom_opt=pydantic_dataclasses",
-            "--custom_opt=client_generation=async_sync",
-            "--custom_opt=server_generation=async",
-            f"--proto_path={path.as_posix()}",
-            f"--custom_out={output_dir.as_posix()}",
-            *[p.as_posix() for p in path.glob("*.proto")],
-        ]
-    else:
-        command = [
-            sys.executable,
-            "-m",
-            "grpc.tools.protoc",
-            f"--proto_path={path.as_posix()}",
-            f"--{python_out_option}={output_dir.as_posix()}",
-            *[p.as_posix() for p in path.glob("*.proto")],
-        ]
-
-        if not reference:
-            command.insert(3, "--python_betterproto2_opt=server_generation=async")
-            command.insert(3, "--python_betterproto2_opt=client_generation=async_sync")
+        if pydantic_dataclasses:
+            command.insert(3, "--python_betterproto2_opt=pydantic_dataclasses")
 
     proc = await asyncio.create_subprocess_exec(
         *command,
