@@ -6,15 +6,8 @@
 # This file has been @generated
 
 __all__ = (
-    {% for _, enum in output_file.enums|dictsort(by="key") %}
-        "{{ enum.py_name }}",
-    {%- endfor -%}
-    {% for _, message in output_file.messages|dictsort(by="key") %}
-        "{{ message.py_name }}",
-    {%- endfor -%}
-    {% for _, service in output_file.services|dictsort(by="key") %}
-        "{{ service.py_name }}Stub",
-        "{{ service.py_name }}Base",
+    {%- for name in all -%}
+    "{{ name }}",
     {%- endfor -%}
 )
 

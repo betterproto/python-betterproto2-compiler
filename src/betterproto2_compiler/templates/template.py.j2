@@ -1,5 +1,5 @@
 {% for _, enum in output_file.enums|dictsort(by="key") %}
-class {{ enum.py_name }}(betterproto2.Enum):
+class {{ enum.py_name | add_to_all }}(betterproto2.Enum):
     {% if enum.comment %}
     """
     {{ enum.comment | indent(4) }}
@@ -31,7 +31,7 @@ class {{ enum.py_name }}(betterproto2.Enum):
 {% else %}
 @dataclass(eq=False, repr=False)
 {% endif %}
-class {{ message.py_name }}(betterproto2.Message):
+class {{ message.py_name | add_to_all }}(betterproto2.Message):
     {% if message.comment or message.oneofs %}
     """
     {{ message.comment | indent(4) }}
@@ -104,7 +104,7 @@ default_message_pool.register_message("{{ output_file.package }}", "{{ message.p
 
 {% if output_file.settings.server_generation == "async" %}
 {% for _, service in output_file.services|dictsort(by="key") %}
-class {{ service.py_name }}Base(ServiceBase):
+class {{ (service.py_name + "Base") | add_to_all }}(ServiceBase):
     {% if service.comment %}
     """
     {{ service.comment | indent(4) }}

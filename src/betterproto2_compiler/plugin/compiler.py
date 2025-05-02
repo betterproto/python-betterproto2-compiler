@@ -33,12 +33,22 @@ def outputfile_compiler(output_file: OutputTemplate) -> str:
         loader=jinja2.FileSystemLoader(templates_folder),
         undefined=jinja2.StrictUndefined,
     )
-    # Load the body first so we have a compleate list of imports needed.
+
+    # List of the symbols that should appear in the `__all__` variable of the file
+    all: list[str] = []
+
+    def add_to_all(name: str) -> str:
+        all.append(name)
+        return name
+
+    env.filters["add_to_all"] = add_to_all
+
     body_template = env.get_template("template.py.j2")
     header_template = env.get_template("header.py.j2")
 
+    # Load the body first do know the symbols defined in the file
     code = body_template.render(output_file=output_file)
-    code = header_template.render(output_file=output_file, version=version) + "\n" + code
+    code = header_template.render(output_file=output_file, version=version, all=all) + "\n" + code
 
     try:
         # Sort imports, delete unused ones

@@ -1,4 +1,4 @@
-class {% block class_name %}{% endblock %}({% block inherit_from %}{% endblock %}):
+class {% filter add_to_all %}{% block class_name %}{% endblock %}{% endfilter %}({% block inherit_from %}{% endblock %}):
     {% block service_docstring scoped %}
     {% if service.comment %}
     """
