@@ -64,6 +64,7 @@ async def generate_test_case_output(test_case_input_path: Path, test_case_name: 
 
     clear_directory(test_case_output_path_reference)
     clear_directory(test_case_output_path_betterproto)
+    clear_directory(test_case_output_path_betterproto_pyd)
 
     (
         (ref_out, ref_err, ref_code),
