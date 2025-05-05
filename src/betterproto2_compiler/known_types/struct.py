@@ -24,7 +24,7 @@ class Struct(VanillaStruct):
 
         json = {}
         for name, value in self.fields.items():
-            json[name] = value.to_dict(casing=casing)
+            json[name] = value.to_dict()
         return json
 
 
@@ -49,9 +49,9 @@ class Value(VanillaValue):
             case Value(bool_value=bool(bool_value)):
                 return bool_value
             case Value(struct_value=struct_value) if struct_value is not None:
-                return struct_value.to_dict(casing=casing)
+                return struct_value.to_dict()
             case Value(list_value=list_value) if list_value is not None:
-                return list_value.to_dict(casing=casing)
+                return list_value.to_dict()
 
 
 class ListValue(VanillaListValue):
@@ -67,5 +67,5 @@ class ListValue(VanillaListValue):
 
         json = []
         for value in self.values:
-            json.append(value.to_dict(casing=casing))
+            json.append(value.to_dict())
         return json
