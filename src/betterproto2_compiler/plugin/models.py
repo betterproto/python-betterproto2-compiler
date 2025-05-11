@@ -441,14 +441,15 @@ class FieldCompiler(ProtoContentBase):
     def annotation(self) -> str:
         py_type = self.py_type
 
+        if self.use_builtins:
+            py_type = f"builtins.{py_type}"
+
         # Add the pydantic annotation if needed
         if self.output_file.settings.pydantic_dataclasses:
             annotations = self.annotations
             if annotations:
                 py_type = f"typing.Annotated[{py_type}, {', '.join(annotations)}]"
 
-        if self.use_builtins:
-            py_type = f"builtins.{py_type}"
         if self.repeated:
             return f"list[{py_type}]"
         if self.optional:
