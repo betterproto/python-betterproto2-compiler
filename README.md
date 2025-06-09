@@ -1,6 +1,6 @@
 # Betterproto2 compiler
 
-![](https://github.com/betterproto/python-betterproto2-compiler/actions/workflows/ci.yml/badge.svg)
+> :warning: The betterproto2 compiler was moved to the betterproto2 repository: https://github.com/betterproto/python-betterproto2
 
 
 
