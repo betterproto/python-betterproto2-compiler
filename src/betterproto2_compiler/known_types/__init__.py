@@ -13,6 +13,7 @@ from .google_values import (
     UInt32Value,
     UInt64Value,
 )
+from .struct import ListValue, Struct, Value
 from .timestamp import Timestamp
 
 # For each (package, message name), lists the methods that should be added to the message definition.
@@ -20,6 +21,11 @@ from .timestamp import Timestamp
 # to the template file: they will automatically be removed if not necessary.
 KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
     ("google.protobuf", "Any"): [Any.pack, Any.unpack, Any.to_dict],
+    # Struct
+    ("google.protobuf", "Struct"): [Struct.to_dict],
+    ("google.protobuf", "Value"): [Value.to_dict],
+    ("google.protobuf", "ListValue"): [ListValue.to_dict],
+    # Time
     ("google.protobuf", "Timestamp"): [
         Timestamp.from_datetime,
         Timestamp.to_datetime,
@@ -38,6 +44,7 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
         Duration.from_wrapped,
         Duration.to_wrapped,
     ],
+    # Values
     ("google.protobuf", "BoolValue"): [
         BoolValue.from_dict,
         BoolValue.to_dict,
@@ -96,6 +103,10 @@ KNOWN_METHODS: dict[tuple[str, str], list[Callable]] = {
 
 # A wrapped type is the type of a message that is automatically replaced by a known Python type.
 WRAPPED_TYPES: dict[tuple[str, str], str] = {
+    # Time
+    ("google.protobuf", "Timestamp"): "datetime.datetime",
+    ("google.protobuf", "Duration"): "datetime.timedelta",
+    # Values
     ("google.protobuf", "BoolValue"): "bool",
     ("google.protobuf", "Int32Value"): "int",
     ("google.protobuf", "Int64Value"): "int",
@@ -105,6 +116,4 @@ WRAPPED_TYPES: dict[tuple[str, str], str] = {
     ("google.protobuf", "DoubleValue"): "float",
     ("google.protobuf", "StringValue"): "str",
     ("google.protobuf", "BytesValue"): "bytes",
-    ("google.protobuf", "Timestamp"): "datetime.datetime",
-    ("google.protobuf", "Duration"): "datetime.timedelta",
 }
